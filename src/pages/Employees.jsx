@@ -4,7 +4,7 @@ import { base44 } from '@/api/base44Client';
 import { useAuth } from '@/lib/AuthContext';
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
-import { Plus, Trash2, Mail, Users as UsersIcon } from 'lucide-react';
+import { Plus, Trash2, Users as UsersIcon } from 'lucide-react';
 import PageHeader from '@/components/PageHeader';
 import EmptyState from '@/components/EmptyState';
 import EmployeeForm from '@/components/EmployeeForm';
@@ -41,12 +41,7 @@ export default function Employees() {
     try {
       const store_ids = data.store_ids.length ? data.store_ids : defaultStore ? [defaultStore.id] : [];
       await base44.entities.Employee.create({ ...data, store_ids });
-      try {
-        await base44.users.inviteUser(data.email, 'user');
-      } catch {
-        /* invite may already exist or fail silently; record is still created */
-      }
-      toast({ title: 'Employee added', description: 'An invitation was sent to their email.' });
+      toast({ title: 'Employee added' });
       setOpen(false);
       load();
     } catch (e) {
@@ -121,9 +116,6 @@ export default function Employees() {
                   <div className="font-semibold text-sm truncate">{emp.name}</div>
                   <div className="text-xs text-muted-foreground truncate">
                     {emp.title || emp.store_ids?.map(storeName).filter(Boolean).join(', ')}
-                  </div>
-                  <div className="text-sm text-muted-foreground truncate flex items-center gap-1 mt-0.5">
-                    <Mail className="w-3 h-3" />{emp.email}
                   </div>
                 </div>
                 <Button variant="ghost" size="sm" onClick={() => setEditTarget(emp)}>Edit</Button>

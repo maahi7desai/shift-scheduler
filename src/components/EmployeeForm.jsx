@@ -6,7 +6,6 @@ import { Checkbox } from '@/components/ui/checkbox';
 
 export default function EmployeeForm({ initial = {}, stores = [], onSubmit, submitting }) {
   const [name, setName] = useState(initial.name || '');
-  const [email, setEmail] = useState(initial.email || '');
   const [phone, setPhone] = useState(initial.phone || '');
   const [title, setTitle] = useState(initial.title || '');
   const [storeIds, setStoreIds] = useState(initial.store_ids || []);
@@ -18,18 +17,13 @@ export default function EmployeeForm({ initial = {}, stores = [], onSubmit, subm
     <form
       onSubmit={(e) => {
         e.preventDefault();
-        onSubmit({ name, email, phone, title, store_ids: storeIds });
+        onSubmit({ name, phone, title, store_ids: storeIds });
       }}
       className="space-y-4"
     >
       <div className="space-y-1.5">
         <Label>Name</Label>
         <Input value={name} onChange={(e) => setName(e.target.value)} required placeholder="Jane Doe" />
-      </div>
-      <div className="space-y-1.5">
-        <Label>Email</Label>
-        <Input type="email" value={email} onChange={(e) => setEmail(e.target.value)} required placeholder="jane@store.com" disabled={!!initial.id} />
-        {!!initial.id && <p className="text-xs text-muted-foreground">Email cannot be changed after creation.</p>}
       </div>
       <div className="space-y-1.5">
         <Label>Phone</Label>

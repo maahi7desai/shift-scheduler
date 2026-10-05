@@ -3,11 +3,10 @@ import { Link, Navigate } from 'react-router-dom';
 import { base44 } from '@/api/base44Client';
 import { useAuth } from '@/lib/AuthContext';
 import { Button } from '@/components/ui/button';
-import { Plus, ChevronLeft, ChevronRight, CalendarDays, Users } from 'lucide-react';
+import { Plus, ChevronLeft, ChevronRight, CalendarDays } from 'lucide-react';
 import PageHeader from '@/components/PageHeader';
 import EmptyState from '@/components/EmptyState';
 import DayCard from '@/components/DayCard';
-import Avatar from '@/components/Avatar';
 import { useToast } from '@/components/ui/use-toast';
 import { getWeekStart, weekDates, fmtDate, fmtDayNum } from '@/lib/schedule';
 
@@ -111,24 +110,6 @@ export default function ScheduleBuilder() {
           <ChevronRight className="w-4 h-4" />
         </Button>
       </div>
-
-      {employees.length > 0 && (
-        <div className="mb-4 rounded-xl border border-border bg-card overflow-hidden">
-          <div className="flex items-center gap-2 px-4 py-2.5 border-b border-border bg-muted/30">
-            <Users className="w-4 h-4 text-muted-foreground" />
-            <span className="text-sm font-medium">Employees ({employees.length})</span>
-          </div>
-          <div className="divide-y divide-border">
-            {employees.map((emp) => (
-              <div key={emp.id} className="flex items-center gap-3 px-4 py-2.5">
-                <Avatar name={emp.name} size={32} />
-                <span className="text-sm font-medium">{emp.name}</span>
-                {emp.title && <span className="text-xs text-muted-foreground">· {emp.title}</span>}
-              </div>
-            ))}
-          </div>
-        </div>
-      )}
 
       <div className="space-y-3">
         {dates.map((d) => (

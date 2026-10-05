@@ -7,6 +7,7 @@ import { Plus, ChevronLeft, ChevronRight, CalendarDays } from 'lucide-react';
 import PageHeader from '@/components/PageHeader';
 import EmptyState from '@/components/EmptyState';
 import DayCard from '@/components/DayCard';
+import EmployeeHoursSummary from '@/components/EmployeeHoursSummary';
 import { useToast } from '@/components/ui/use-toast';
 import { getWeekStart, weekDates, fmtDate, fmtDayNum } from '@/lib/schedule';
 
@@ -123,6 +124,8 @@ export default function ScheduleBuilder() {
           />
         ))}
       </div>
+
+      <EmployeeHoursSummary shifts={shifts} employees={employees} />
     </div>
   );
 }

@@ -4,11 +4,22 @@ import { Button } from '@/components/ui/button';
 import { Switch } from '@/components/ui/switch';
 import { useToast } from '@/components/ui/use-toast';
 import { DAY_NAMES } from '@/lib/schedule';
-import TimeInput from '@/components/TimeInput';
+import { Clock, ChevronDown, ChevronUp } from 'lucide-react';
+
+const fmt12 = (t) => {
+  if (!t) return '';
+  const [h, m] = t.split(':').map(Number);
+  const ampm = h >= 12 ? 'PM' : 'AM';
+  const h12 = h % 12 || 12;
+  return `${h12}:${String(m).padStart(2, '0')} ${ampm}`;
+};
+
+const todayDow = () => new Date().getDay();
 
 export default function WorkingHoursEditor({ storeId }) {
   const [rows, setRows] = useState(null);
   const [saving, setSaving] = useState(false);
+  const [expanded, setExpanded] = useState(true);
   const { toast } = useToast();
 
   useEffect(() => {
@@ -62,19 +73,60 @@ export default function WorkingHoursEditor({ storeId }) {
 
   if (!rows) return <div className="py-8 text-center text-sm text-muted-foreground">Loading…</div>;
 
+  const todayIdx = todayDow();
+  const today = rows.find((r) => r.dow === todayIdx);
+  const isOpen = today && !today.is_closed;
+  const statusText = isOpen ? 'Open now' : 'Closed';
+
   return (
-    <div className="space-y-3">
-      {rows.map((row) => (
-        <div key={row.dow} className="flex items-center gap-3">
-          <div className="w-24 text-sm font-medium">{row.name}</div>
-          <Switch checked={!row.is_closed} onCheckedChange={(v) => update(row.dow, { is_closed: !v })} />
-          <div className="flex-1 flex items-center gap-2">
-            <TimeInput value={row.open_time} onChange={(v) => update(row.dow, { open_time: v })} disabled={row.is_closed} className="flex-1" />
-            <span className="text-muted-foreground">–</span>
-            <TimeInput value={row.close_time} onChange={(v) => update(row.dow, { close_time: v })} disabled={row.is_closed} className="flex-1" />
+    <div className="space-y-4">
+      <div className="rounded-2xl border border-border overflow-hidden bg-card">
+        <button
+          type="button"
+          onClick={() => setExpanded((e) => !e)}
+          className="w-full flex items-center gap-3 px-4 py-3.5 bg-muted/40"
+        >
+          <Clock className="w-5 h-5 text-teal-700 shrink-0" />
+          <span className="flex-1 text-left text-sm font-medium text-foreground">{statusText}</span>
+          {expanded ? <ChevronUp className="w-5 h-5 text-muted-foreground" /> : <ChevronDown className="w-5 h-5 text-muted-foreground" />}
+        </button>
+
+        {expanded && (
+          <div className="divide-y divide-border">
+            {rows.map((row) => {
+              const isToday = row.dow === todayIdx;
+              const timeText = row.is_closed ? 'Closed' : `${fmt12(row.open_time)} – ${fmt12(row.close_time)}`;
+              return (
+                <div key={row.dow} className="flex items-center px-4 py-3 gap-3">
+                  <span className={`w-24 text-sm ${isToday ? 'font-bold' : 'font-normal'} text-foreground`}>{row.name}</span>
+                  <span className="flex-1 text-sm text-muted-foreground">{timeText}</span>
+                  <Switch checked={!row.is_closed} onCheckedChange={(v) => update(row.dow, { is_closed: !v })} />
+                </div>
+              );
+            })}
+
+            {rows.map((row) => !row.is_closed && (
+              <div key={`edit-${row.dow}`} className="flex items-center px-4 py-2.5 gap-3 bg-muted/20">
+                <span className="w-24 text-xs text-muted-foreground">{row.name} times</span>
+                <input
+                  type="time"
+                  value={row.open_time}
+                  onChange={(e) => update(row.dow, { open_time: e.target.value })}
+                  className="flex-1 h-9 rounded-md border border-input bg-background px-2 text-sm"
+                />
+                <span className="text-muted-foreground text-xs">–</span>
+                <input
+                  type="time"
+                  value={row.close_time}
+                  onChange={(e) => update(row.dow, { close_time: e.target.value })}
+                  className="flex-1 h-9 rounded-md border border-input bg-background px-2 text-sm"
+                />
+              </div>
+            ))}
           </div>
-        </div>
-      ))}
+        )}
+      </div>
+
       <Button onClick={save} disabled={saving} className="w-full">
         {saving ? 'Saving…' : 'Save working hours'}
       </Button>

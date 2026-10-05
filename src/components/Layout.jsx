@@ -1,0 +1,45 @@
+import { Outlet, NavLink } from 'react-router-dom';
+import { useAuth } from '@/lib/AuthContext';
+import { CalendarDays, Store, Users, Repeat2, Clock } from 'lucide-react';
+
+const ownerTabs = [
+  { to: '/schedule', label: 'Schedule', icon: CalendarDays },
+  { to: '/stores', label: 'Stores', icon: Store },
+  { to: '/employees', label: 'Team', icon: Users },
+  { to: '/swaps', label: 'Swaps', icon: Repeat2 },
+];
+
+const employeeTabs = [
+  { to: '/my-schedule', label: 'My Shifts', icon: Clock },
+  { to: '/swaps', label: 'Swaps', icon: Repeat2 },
+];
+
+export default function Layout() {
+  const { user } = useAuth();
+  const tabs = user?.role === 'admin' ? ownerTabs : employeeTabs;
+  return (
+    <div className="min-h-screen bg-background flex flex-col">
+      <main className="flex-1 mx-auto w-full max-w-md px-4 pt-6 pb-24">
+        <Outlet />
+      </main>
+      <nav className="fixed bottom-0 inset-x-0 border-t border-border bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/80">
+        <div className="mx-auto max-w-md flex">
+          {tabs.map((t) => (
+            <NavLink
+              key={t.to}
+              to={t.to}
+              className={({ isActive }) =>
+                `flex-1 flex flex-col items-center gap-1 py-3 text-[11px] font-medium transition-colors ${
+                  isActive ? 'text-foreground' : 'text-muted-foreground'
+                }`
+              }
+            >
+              <t.icon className="w-5 h-5" />
+              {t.label}
+            </NavLink>
+          ))}
+        </div>
+      </nav>
+    </div>
+  );
+}

@@ -1,0 +1,107 @@
+{
+  "name": "SwapRequest",
+  "type": "object",
+  "properties": {
+    "shift_id": {
+      "type": "string"
+    },
+    "shift_date": {
+      "type": "string",
+      "format": "date"
+    },
+    "store_id": {
+      "type": "string"
+    },
+    "store_name": {
+      "type": "string"
+    },
+    "from_employee_id": {
+      "type": "string"
+    },
+    "from_employee_name": {
+      "type": "string"
+    },
+    "from_employee_email": {
+      "type": "string"
+    },
+    "to_employee_id": {
+      "type": "string"
+    },
+    "to_employee_name": {
+      "type": "string"
+    },
+    "to_employee_email": {
+      "type": "string"
+    },
+    "start_time": {
+      "type": "string"
+    },
+    "end_time": {
+      "type": "string"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "pending",
+        "accepted",
+        "declined"
+      ],
+      "default": "pending"
+    },
+    "owner_notified": {
+      "type": "boolean",
+      "default": false
+    }
+  },
+  "required": [
+    "shift_id",
+    "from_employee_id",
+    "to_employee_id"
+  ],
+  "rls": {
+    "read": {
+      "$or": [
+        {
+          "data.from_employee_email": "{{user.email}}"
+        },
+        {
+          "data.to_employee_email": "{{user.email}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    },
+    "create": {
+      "$or": [
+        {
+          "data.from_employee_email": "{{user.email}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    },
+    "update": {
+      "$or": [
+        {
+          "data.to_employee_email": "{{user.email}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    },
+    "delete": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
+}

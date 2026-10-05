@@ -1,0 +1,44 @@
+{
+  "name": "WorkingHours",
+  "type": "object",
+  "properties": {
+    "store_id": {
+      "type": "string"
+    },
+    "day_of_week": {
+      "type": "number"
+    },
+    "open_time": {
+      "type": "string"
+    },
+    "close_time": {
+      "type": "string"
+    },
+    "is_closed": {
+      "type": "boolean",
+      "default": false
+    }
+  },
+  "required": [
+    "store_id",
+    "day_of_week"
+  ],
+  "rls": {
+    "read": {},
+    "create": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "update": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "delete": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
+}

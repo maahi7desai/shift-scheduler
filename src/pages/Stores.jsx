@@ -5,10 +5,11 @@ import { useAuth } from '@/lib/AuthContext';
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Badge } from '@/components/ui/badge';
-import { Plus, MapPin, Phone, Clock, Store as StoreIcon, Star } from 'lucide-react';
+import { Plus, MapPin, Phone, Store as StoreIcon, Star } from 'lucide-react';
 import PageHeader from '@/components/PageHeader';
 import EmptyState from '@/components/EmptyState';
 import StoreForm from '@/components/StoreForm';
+import WorkingHoursDisplay from '@/components/WorkingHoursDisplay';
 import { useToast } from '@/components/ui/use-toast';
 
 export default function Stores() {
@@ -94,9 +95,12 @@ export default function Stores() {
                   <Phone className="w-3.5 h-3.5" />{s.phone}
                 </p>
               )}
+              <div className="mt-3">
+                <WorkingHoursDisplay storeId={s.id} />
+              </div>
               <div className="flex gap-2 mt-3">
                 <Button variant="outline" size="sm" asChild>
-                  <Link to={`/stores/${s.id}`}><Clock className="w-4 h-4 mr-1" />Working hours</Link>
+                  <Link to={`/stores/${s.id}`}>Edit store</Link>
                 </Button>
                 {!s.is_default && (
                   <Button variant="ghost" size="sm" onClick={() => makeDefault(s)}>

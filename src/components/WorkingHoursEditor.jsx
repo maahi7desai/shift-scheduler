@@ -4,7 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Switch } from '@/components/ui/switch';
 import { useToast } from '@/components/ui/use-toast';
 import { DAY_NAMES } from '@/lib/schedule';
-import { Clock, ChevronDown, ChevronUp } from 'lucide-react';
+import { Clock, ChevronDown, ChevronUp, Pencil } from 'lucide-react';
 
 const fmt12 = (t) => {
   if (!t) return '';
@@ -20,6 +20,7 @@ export default function WorkingHoursEditor({ storeId }) {
   const [rows, setRows] = useState(null);
   const [saving, setSaving] = useState(false);
   const [expanded, setExpanded] = useState(true);
+  const [mode, setMode] = useState('view');
   const { toast } = useToast();
 
   useEffect(() => {
@@ -64,6 +65,7 @@ export default function WorkingHoursEditor({ storeId }) {
         }
       }
       toast({ title: 'Working hours saved' });
+      setMode('view');
     } catch (e) {
       toast({ title: 'Error', description: e.message, variant: 'destructive' });
     } finally {
@@ -100,36 +102,30 @@ export default function WorkingHoursEditor({ storeId }) {
                 <div key={row.dow} className="flex items-center px-4 py-3 gap-3">
                   <span className={`w-24 text-sm ${isToday ? 'font-bold' : 'font-normal'} text-foreground`}>{row.name}</span>
                   <span className="flex-1 text-sm text-muted-foreground">{timeText}</span>
-                  <Switch checked={!row.is_closed} onCheckedChange={(v) => update(row.dow, { is_closed: !v })} />
+                  {mode === 'edit' && (
+                    <Switch checked={!row.is_closed} onCheckedChange={(v) => update(row.dow, { is_closed: !v })} />
+                  )}
                 </div>
               );
             })}
-
-            {rows.map((row) => !row.is_closed && (
-              <div key={`edit-${row.dow}`} className="flex items-center px-4 py-2.5 gap-3 bg-muted/20">
-                <span className="w-24 text-xs text-muted-foreground">{row.name} times</span>
-                <input
-                  type="time"
-                  value={row.open_time}
-                  onChange={(e) => update(row.dow, { open_time: e.target.value })}
-                  className="flex-1 h-9 rounded-md border border-input bg-background px-2 text-sm"
-                />
-                <span className="text-muted-foreground text-xs">–</span>
-                <input
-                  type="time"
-                  value={row.close_time}
-                  onChange={(e) => update(row.dow, { close_time: e.target.value })}
-                  className="flex-1 h-9 rounded-md border border-input bg-background px-2 text-sm"
-                />
-              </div>
-            ))}
           </div>
         )}
       </div>
 
-      <Button onClick={save} disabled={saving} className="w-full">
-        {saving ? 'Saving…' : 'Save working hours'}
-      </Button>
+      {mode === 'view' ? (
+        <Button variant="outline" className="w-full" onClick={() => setMode('edit')}>
+          <Pencil className="w-4 h-4 mr-1" />Modify
+        </Button>
+      ) : (
+        <div className="flex gap-2">
+          <Button variant="outline" className="flex-1" onClick={() => setMode('view')} disabled={saving}>
+            Cancel
+          </Button>
+          <Button onClick={save} disabled={saving} className="flex-1">
+            {saving ? 'Saving…' : 'Save'}
+          </Button>
+        </div>
+      )}
     </div>
   );
 }

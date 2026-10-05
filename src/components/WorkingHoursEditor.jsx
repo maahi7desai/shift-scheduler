@@ -99,11 +99,30 @@ export default function WorkingHoursEditor({ storeId }) {
               const isToday = row.dow === todayIdx;
               const timeText = row.is_closed ? 'Closed' : `${fmt12(row.open_time)} – ${fmt12(row.close_time)}`;
               return (
-                <div key={row.dow} className="flex items-center px-4 py-3 gap-3">
-                  <span className={`w-24 text-sm ${isToday ? 'font-bold' : 'font-normal'} text-foreground`}>{row.name}</span>
-                  <span className="flex-1 text-sm text-muted-foreground">{timeText}</span>
-                  {mode === 'edit' && (
-                    <Switch checked={!row.is_closed} onCheckedChange={(v) => update(row.dow, { is_closed: !v })} />
+                <div key={row.dow}>
+                  <div className="flex items-center px-4 py-3 gap-3">
+                    <span className={`w-24 text-sm ${isToday ? 'font-bold' : 'font-normal'} text-foreground`}>{row.name}</span>
+                    <span className="flex-1 text-sm text-muted-foreground">{timeText}</span>
+                    {mode === 'edit' && (
+                      <Switch checked={!row.is_closed} onCheckedChange={(v) => update(row.dow, { is_closed: !v })} />
+                    )}
+                  </div>
+                  {mode === 'edit' && !row.is_closed && (
+                    <div className="flex items-center px-4 py-2.5 gap-3 bg-muted/20">
+                      <input
+                        type="time"
+                        value={row.open_time}
+                        onChange={(e) => update(row.dow, { open_time: e.target.value })}
+                        className="flex-1 h-9 rounded-md border border-input bg-background px-2 text-sm"
+                      />
+                      <span className="text-muted-foreground text-xs">–</span>
+                      <input
+                        type="time"
+                        value={row.close_time}
+                        onChange={(e) => update(row.dow, { close_time: e.target.value })}
+                        className="flex-1 h-9 rounded-md border border-input bg-background px-2 text-sm"
+                      />
+                    </div>
                   )}
                 </div>
               );

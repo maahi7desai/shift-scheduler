@@ -49,19 +49,25 @@ export default function ScheduleBuilder() {
 
   if (user && user.role !== 'admin') return <Navigate to="/my-schedule" replace />;
 
-  const addShift = async (date, employee_id, start_time, end_time) => {
+  const addShift = async (date, employee_id, start_time, end_time, replicate) => {
     try {
       const emp = employee_id ? employees.find((e) => e.id === employee_id) : null;
       const store = stores.find((s) => s.id === storeId);
-      const created = await base44.entities.Shift.create({
+      const targetDates = replicate ? dates.map(fmtDate) : [date];
+      const records = targetDates.map((d) => ({
         store_id: storeId,
         store_name: store?.name,
-        date,
+        date: d,
         ...(emp ? { employee_id, employee_name: emp.name, employee_email: emp.email } : {}),
         start_time,
         end_time,
+      }));
+      const created = await base44.entities.Shift.bulkCreate(records);
+      setShifts((m) => {
+        const next = { ...m };
+        created.forEach((s) => { (next[s.date] ||= []).push(s); });
+        return next;
       });
-      setShifts((m) => ({ ...m, [date]: [...(m[date] || []), created] }));
     } catch (e) {
       toast({ title: 'Error', description: e.message, variant: 'destructive' });
     }
@@ -129,7 +135,7 @@ export default function ScheduleBuilder() {
             date={d}
             shifts={shifts[fmtDate(d)] || []}
             employees={employees}
-            onAdd={(p) => addShift(fmtDate(d), p.employee_id, p.start_time, p.end_time)}
+            onAdd={(p) => addShift(fmtDate(d), p.employee_id, p.start_time, p.end_time, p.replicate)}
             onRemove={(id) => removeShift(id, fmtDate(d))}
             onEdit={(id, patch) => editShift(id, fmtDate(d), patch)}
           />

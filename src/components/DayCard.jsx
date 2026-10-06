@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
+import { Checkbox } from '@/components/ui/checkbox';
 import { Plus, Trash2, Pencil } from 'lucide-react';
 import TimeInput from '@/components/TimeInput';
 import { fmtDayLabel, fmtDayNum, formatTime } from '@/lib/schedule';
@@ -12,13 +13,15 @@ export default function DayCard({ date, shifts, employees, onAdd, onRemove, onEd
   const [editingId, setEditingId] = useState(null);
   const [editStart, setEditStart] = useState('');
   const [editEnd, setEditEnd] = useState('');
+  const [replicate, setReplicate] = useState(false);
 
   const submit = () => {
-    onAdd({ employee_id: employeeId || null, start_time: start, end_time: end });
+    onAdd({ employee_id: employeeId || null, start_time: start, end_time: end, replicate });
     setAdding(false);
     setEmployeeId('');
     setStart('11:30');
     setEnd('17:30');
+    setReplicate(false);
   };
 
   const startEdit = (s) => {
@@ -93,6 +96,10 @@ export default function DayCard({ date, shifts, employees, onAdd, onRemove, onEd
               <TimeInput value={start} onChange={setStart} className="flex-1" />
               <span className="text-muted-foreground">–</span>
               <TimeInput value={end} onChange={setEnd} className="flex-1" />
+            </div>
+            <div className="flex items-center gap-2">
+              <Checkbox id="replicate" checked={replicate} onCheckedChange={setReplicate} />
+              <label htmlFor="replicate" className="text-sm">Replicate across the week</label>
             </div>
             <div className="flex gap-2">
               <Button size="sm" onClick={submit}>Add</Button>

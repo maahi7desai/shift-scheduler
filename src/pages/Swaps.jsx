@@ -19,6 +19,7 @@ export default function Swaps() {
   const { user } = useAuth();
   const { toast } = useToast();
   const [requests, setRequests] = useState(null);
+  const [employees, setEmployees] = useState([]);
   const [busy, setBusy] = useState('');
   const isAdmin = user?.role === 'admin';
 
@@ -27,6 +28,15 @@ export default function Swaps() {
     setRequests(items);
   };
   useEffect(() => { load(); }, []);
+
+  useEffect(() => {
+    (async () => {
+      const { items } = await base44.entities.Employee.filter({}, { limit: 200 });
+      setEmployees(items);
+    })();
+  }, []);
+
+  const nameFor = (id, fallback) => employees.find((e) => e.id === id)?.name || fallback;
 
   const respond = async (id, action) => {
     setBusy(id);
@@ -64,8 +74,8 @@ export default function Swaps() {
                   <Badge className={STATUS_STYLE[r.status]} variant="secondary">{r.status}</Badge>
                 </div>
                 <div className="text-sm text-muted-foreground">
-                  <span className="text-foreground font-medium">{r.from_employee_name}</span> wants to swap with{' '}
-                  <span className="text-foreground font-medium">{r.to_employee_name}</span>
+                  <span className="text-foreground font-medium">{nameFor(r.from_employee_id, r.from_employee_name)}</span> wants to swap with{' '}
+                  <span className="text-foreground font-medium">{nameFor(r.to_employee_id, r.to_employee_name)}</span>
                 </div>
                 {r.store_name && <div className="text-xs text-muted-foreground mt-0.5">{r.store_name}</div>}
                 {isAdmin && r.status === 'accepted' && (

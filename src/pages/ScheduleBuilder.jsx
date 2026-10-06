@@ -18,8 +18,8 @@ import {
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
-  AlertDialogTrigger,
-} from '@/components/ui/alert-dialog';
+  AlertDialogTrigger } from
+'@/components/ui/alert-dialog';
 import { getWeekStart, weekDates, fmtDate, fmtDayNum, fmtDayLabel } from '@/lib/schedule';
 
 export default function ScheduleBuilder() {
@@ -45,15 +45,15 @@ export default function ScheduleBuilder() {
     if (!storeId) return;
     (async () => {
       const [empRes, shiftRes] = await Promise.all([
-        base44.entities.Employee.filter({ store_ids: storeId }, { sort: 'name', limit: 100 }),
-        base44.entities.Shift.filter(
-          { store_id: storeId, date: { $gte: fmtDate(dates[0]), $lte: fmtDate(dates[6]) } },
-          { sort: 'date', limit: 200 }
-        ),
-      ]);
+      base44.entities.Employee.filter({ store_ids: storeId }, { sort: 'name', limit: 100 }),
+      base44.entities.Shift.filter(
+        { store_id: storeId, date: { $gte: fmtDate(dates[0]), $lte: fmtDate(dates[6]) } },
+        { sort: 'date', limit: 200 }
+      )]
+      );
       setEmployees(empRes.items);
       const map = {};
-      shiftRes.items.forEach((s) => { (map[s.date] ||= []).push(s); });
+      shiftRes.items.forEach((s) => {(map[s.date] ||= []).push(s);});
       setShifts(map);
     })();
   }, [storeId, weekStart]);
@@ -74,7 +74,7 @@ export default function ScheduleBuilder() {
       const updated = await base44.entities.Shift.update(id, patch);
       setShifts((m) => ({
         ...m,
-        [date]: (m[date] || []).map((s) => (s.id === id ? { ...s, ...updated } : s)),
+        [date]: (m[date] || []).map((s) => s.id === id ? { ...s, ...updated } : s)
       }));
     } catch (e) {
       toast({ title: 'Error', description: e.message, variant: 'destructive' });
@@ -95,13 +95,13 @@ export default function ScheduleBuilder() {
 
   const assignShift = async (id, date, emp) => {
     try {
-      const patch = emp
-        ? { employee_id: emp.id, employee_name: emp.name, employee_email: emp.email }
-        : { employee_id: null, employee_name: null, employee_email: null };
+      const patch = emp ?
+      { employee_id: emp.id, employee_name: emp.name, employee_email: emp.email } :
+      { employee_id: null, employee_name: null, employee_email: null };
       const updated = await base44.entities.Shift.update(id, patch);
       setShifts((m) => ({
         ...m,
-        [date]: (m[date] || []).map((s) => (s.id === id ? { ...s, ...updated } : s)),
+        [date]: (m[date] || []).map((s) => s.id === id ? { ...s, ...updated } : s)
       }));
       toast({ title: emp ? `Assigned to ${emp.name}` : 'Shift is now open' });
     } catch (e) {
@@ -115,9 +115,9 @@ export default function ScheduleBuilder() {
         icon={CalendarDays}
         title="No store yet"
         description="Create a store before building a schedule."
-        action={<Button asChild><Link to="/stores">Go to stores</Link></Button>}
-      />
-    );
+        action={<Button asChild><Link to="/stores">Go to stores</Link></Button>} />);
+
+
   }
 
   const createUrl = `/schedule/new?store=${storeId}&week=${weekStart.toISOString()}`;
@@ -127,12 +127,12 @@ export default function ScheduleBuilder() {
       <PageHeader
         title="Schedule"
         subtitle="Build the weekly schedule"
-        action={isAdmin ? (
-          <div className="flex items-center gap-2">
+        action={isAdmin ?
+        <div className="flex items-center gap-2">
             <AlertDialog>
               <AlertDialogTrigger asChild>
                 <Button size="sm" variant="outline">
-                  <Trash2 className="w-4 h-4 mr-1" />Clear week
+                  <Trash2 className="w-4 h-4 mr-1" />Clear
                 </Button>
               </AlertDialogTrigger>
               <AlertDialogContent>
@@ -151,19 +151,19 @@ export default function ScheduleBuilder() {
             <Button size="sm" asChild>
               <Link to={createUrl}><Plus className="w-4 h-4 mr-1" />Shift</Link>
             </Button>
-          </div>
-        ) : null}
-      />
+          </div> :
+        null} />
+      
 
       <div className="flex items-center gap-2 mb-3">
         <select
           value={storeId}
           onChange={(e) => setStoreId(e.target.value)}
-          className="h-9 rounded-md border border-input bg-background px-2 text-sm flex-1"
-        >
-          {stores?.map((s) => (
-            <option key={s.id} value={s.id}>{s.name}</option>
-          ))}
+          className="h-9 rounded-md border border-input bg-background px-2 text-sm flex-1">
+          
+          {stores?.map((s) =>
+          <option key={s.id} value={s.id}>{s.name}</option>
+          )}
         </select>
         <Button variant="outline" size="sm" onClick={() => setWeekStart((ws) => new Date(ws.getTime() - 7 * 864e5))}>
           <ChevronLeft className="w-4 h-4" />
@@ -186,25 +186,25 @@ export default function ScheduleBuilder() {
                 <div className="text-xs text-muted-foreground ml-auto">{dayShifts.length} shift{dayShifts.length === 1 ? '' : 's'}</div>
               </div>
               <div className="rounded-xl border border-border bg-card px-3">
-                {dayShifts.map((s) => (
-                  <ShiftRow
-                    key={s.id}
-                    shift={s}
-                    employees={employees}
-                    readOnly={!isAdmin}
-                    onRemove={(id) => removeShift(id, ds)}
-                    onEdit={(id, patch) => editShift(id, ds, patch)}
-                    onAssign={(id, emp) => assignShift(id, ds, emp)}
-                  />
-                ))}
+                {dayShifts.map((s) =>
+                <ShiftRow
+                  key={s.id}
+                  shift={s}
+                  employees={employees}
+                  readOnly={!isAdmin}
+                  onRemove={(id) => removeShift(id, ds)}
+                  onEdit={(id, patch) => editShift(id, ds, patch)}
+                  onAssign={(id, emp) => assignShift(id, ds, emp)} />
+
+                )}
                 {dayShifts.length === 0 && <div className="text-xs text-muted-foreground py-3 text-center">No shifts</div>}
               </div>
-            </div>
-          );
+            </div>);
+
         })}
       </div>
 
       <EmployeeHoursSummary shifts={shifts} employees={employees} />
-    </div>
-  );
+    </div>);
+
 }

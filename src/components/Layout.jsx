@@ -1,17 +1,19 @@
 import { Outlet, NavLink } from 'react-router-dom';
 import { useAuth } from '@/lib/AuthContext';
-import { CalendarDays, Store, Users, Repeat2, Clock } from 'lucide-react';
+import { CalendarDays, Store, Users, Repeat2, Clock, Calendar } from 'lucide-react';
 
 const ownerTabs = [
   { to: '/schedule', label: 'Schedule', icon: CalendarDays },
   { to: '/stores', label: 'Stores', icon: Store },
   { to: '/employees', label: 'Team', icon: Users },
   { to: '/swaps', label: 'Swaps', icon: Repeat2 },
+  { to: '/calendar', label: 'Calendar', icon: Calendar },
 ];
 
 const employeeTabs = [
   { to: '/my-schedule', label: 'My Shifts', icon: Clock },
   { to: '/swaps', label: 'Swaps', icon: Repeat2 },
+  { to: '/calendar', label: 'Calendar', icon: Calendar },
 ];
 
 export default function Layout() {

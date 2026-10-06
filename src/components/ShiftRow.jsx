@@ -78,7 +78,7 @@ export default function ShiftRow({ shift, employees, onRemove, onEdit, onAssign,
             </Popover>
           )}
           <Button size="sm" variant="ghost" className="h-8 w-8 p-0" onClick={() => onRemove(shift.id)}>
-            <Trash2 className="w-4 h-4 text-destructive" />
+            <Trash2 className="w-4 h-4 text-muted-foreground" />
           </Button>
         </>
       )}

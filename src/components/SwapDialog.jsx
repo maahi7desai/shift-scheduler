@@ -25,7 +25,7 @@ export default function SwapDialog({ shift, employees, open, onDone }) {
         store_id: shift.store_id,
         store_name: shift.store_name,
         from_employee_id: shift.employee_id,
-        from_employee_name: shift.employee_name,
+        from_employee_name: employees.find((e) => e.id === shift.employee_id)?.name || shift.employee_name,
         from_employee_email: shift.employee_email,
         to_employee_id: target.id,
         to_employee_name: target.name,

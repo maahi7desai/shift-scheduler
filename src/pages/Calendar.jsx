@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { base44 } from '@/api/base44Client';
 import { useAuth } from '@/lib/AuthContext';
-import { ChevronLeft, ChevronRight, Search, Plus, CalendarDays, Star } from 'lucide-react';
+import { ChevronLeft, ChevronRight, Star } from 'lucide-react';
 import CalendarGrid from '@/components/CalendarGrid';
 import { format, parseISO } from 'date-fns';
 
@@ -29,51 +29,23 @@ export default function Calendar() {
 
   return (
     <div className="pb-4">
-      {/* Top nav */}
-      <div className="flex items-center justify-between mb-5">
-        <div className="flex items-center gap-2">
-          <div className="flex items-center rounded-full border border-neutral-200 overflow-hidden">
-            <button
-              onClick={() => setMonthDate((d) => new Date(d.getFullYear() - 1, d.getMonth(), 1))}
-              className="px-2.5 py-1.5 hover:bg-neutral-50"
-            >
-              <ChevronLeft className="w-4 h-4" />
-            </button>
-            <span className="px-2 text-sm font-medium">{monthDate.getFullYear()}</span>
-            <button
-              onClick={() => setMonthDate((d) => new Date(d.getFullYear() + 1, d.getMonth(), 1))}
-              className="px-2.5 py-1.5 hover:bg-neutral-50"
-            >
-              <ChevronRight className="w-4 h-4" />
-            </button>
-          </div>
-        </div>
-        <div className="flex items-center gap-2 px-3 py-1.5 rounded-full border border-neutral-200">
-          <CalendarDays className="w-4 h-4" />
-          <Search className="w-4 h-4" />
-          <Plus className="w-4 h-4" />
-        </div>
-      </div>
-
       {/* Month header */}
-      <div className="flex items-center justify-between mb-4">
+      <div className="flex items-center gap-2 mb-4">
+        <button
+          onClick={() => setMonthDate((d) => new Date(d.getFullYear(), d.getMonth() - 1, 1))}
+          className="p-1.5 rounded-full hover:bg-neutral-100"
+        >
+          <ChevronLeft className="w-5 h-5" />
+        </button>
         <h1 className="text-3xl font-bold tracking-tight">
           {format(monthDate, 'MMMM')}
         </h1>
-        <div className="flex items-center rounded-full border border-neutral-200 overflow-hidden">
-          <button
-            onClick={() => setMonthDate((d) => new Date(d.getFullYear(), d.getMonth() - 1, 1))}
-            className="px-2.5 py-1.5 hover:bg-neutral-50"
-          >
-            <ChevronLeft className="w-4 h-4" />
-          </button>
-          <button
-            onClick={() => setMonthDate((d) => new Date(d.getFullYear(), d.getMonth() + 1, 1))}
-            className="px-2.5 py-1.5 hover:bg-neutral-50"
-          >
-            <ChevronRight className="w-4 h-4" />
-          </button>
-        </div>
+        <button
+          onClick={() => setMonthDate((d) => new Date(d.getFullYear(), d.getMonth() + 1, 1))}
+          className="p-1.5 rounded-full hover:bg-neutral-100"
+        >
+          <ChevronRight className="w-5 h-5" />
+        </button>
       </div>
 
       <CalendarGrid

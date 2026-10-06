@@ -29,23 +29,42 @@ export default function Calendar() {
 
   return (
     <div className="pb-4">
-      {/* Month header */}
-      <div className="flex items-center gap-2 mb-4">
-        <button
-          onClick={() => setMonthDate((d) => new Date(d.getFullYear(), d.getMonth() - 1, 1))}
-          className="p-1.5 rounded-full hover:bg-neutral-100"
-        >
-          <ChevronLeft className="w-5 h-5" />
-        </button>
-        <h1 className="text-3xl font-bold tracking-tight">
-          {format(monthDate, 'MMMM')}
-        </h1>
-        <button
-          onClick={() => setMonthDate((d) => new Date(d.getFullYear(), d.getMonth() + 1, 1))}
-          className="p-1.5 rounded-full hover:bg-neutral-100"
-        >
-          <ChevronRight className="w-5 h-5" />
-        </button>
+      {/* Year + Month header */}
+      <div className="flex items-center gap-4 mb-4">
+        <div className="flex items-center gap-1">
+          <button
+            onClick={() => setMonthDate((d) => new Date(d.getFullYear() - 1, d.getMonth(), 1))}
+            className="p-1.5 rounded-full hover:bg-neutral-100"
+          >
+            <ChevronLeft className="w-5 h-5" />
+          </button>
+          <span className="text-2xl font-bold tracking-tight tabular-nums">
+            {monthDate.getFullYear()}
+          </span>
+          <button
+            onClick={() => setMonthDate((d) => new Date(d.getFullYear() + 1, d.getMonth(), 1))}
+            className="p-1.5 rounded-full hover:bg-neutral-100"
+          >
+            <ChevronRight className="w-5 h-5" />
+          </button>
+        </div>
+        <div className="flex items-center gap-1">
+          <button
+            onClick={() => setMonthDate((d) => new Date(d.getFullYear(), d.getMonth() - 1, 1))}
+            className="p-1.5 rounded-full hover:bg-neutral-100"
+          >
+            <ChevronLeft className="w-5 h-5" />
+          </button>
+          <h1 className="text-3xl font-bold tracking-tight">
+            {format(monthDate, 'MMMM')}
+          </h1>
+          <button
+            onClick={() => setMonthDate((d) => new Date(d.getFullYear(), d.getMonth() + 1, 1))}
+            className="p-1.5 rounded-full hover:bg-neutral-100"
+          >
+            <ChevronRight className="w-5 h-5" />
+          </button>
+        </div>
       </div>
 
       <CalendarGrid

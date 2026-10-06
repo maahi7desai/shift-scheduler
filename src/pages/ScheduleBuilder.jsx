@@ -3,10 +3,11 @@ import { Link, Navigate } from 'react-router-dom';
 import { base44 } from '@/api/base44Client';
 import { useAuth } from '@/lib/AuthContext';
 import { Button } from '@/components/ui/button';
-import { Plus, ChevronLeft, ChevronRight, CalendarDays } from 'lucide-react';
+import { ChevronLeft, ChevronRight, CalendarDays } from 'lucide-react';
 import PageHeader from '@/components/PageHeader';
 import EmptyState from '@/components/EmptyState';
-import DayCard from '@/components/DayCard';
+import DayColumn from '@/components/DayColumn';
+import ShiftAddForm from '@/components/ShiftAddForm';
 import EmployeeHoursSummary from '@/components/EmployeeHoursSummary';
 import { useToast } from '@/components/ui/use-toast';
 import { getWeekStart, weekDates, fmtDate, fmtDayNum } from '@/lib/schedule';
@@ -19,6 +20,7 @@ export default function ScheduleBuilder() {
   const [weekStart, setWeekStart] = useState(getWeekStart());
   const [employees, setEmployees] = useState([]);
   const [shifts, setShifts] = useState({});
+  const [selectedDays, setSelectedDays] = useState([]);
 
   const dates = weekDates(weekStart);
 
@@ -44,17 +46,28 @@ export default function ScheduleBuilder() {
       const map = {};
       shiftRes.items.forEach((s) => { (map[s.date] ||= []).push(s); });
       setShifts(map);
+      setSelectedDays([]);
     })();
   }, [storeId, weekStart]);
 
   if (user && user.role !== 'admin') return <Navigate to="/my-schedule" replace />;
 
-  const addShift = async (date, employee_id, start_time, end_time, replicate) => {
+  const toggleDay = (ds) => {
+    setSelectedDays((prev) => (prev.includes(ds) ? prev.filter((d) => d !== ds) : [...prev, ds]));
+  };
+
+  const selectAll = () => {
+    setSelectedDays((prev) =>
+      prev.length === dates.length ? [] : dates.map(fmtDate)
+    );
+  };
+
+  const addShift = async ({ employee_id, start_time, end_time }) => {
+    if (!selectedDays.length) return;
     try {
       const emp = employee_id ? employees.find((e) => e.id === employee_id) : null;
       const store = stores.find((s) => s.id === storeId);
-      const targetDates = replicate ? dates.map(fmtDate) : [date];
-      const records = targetDates.map((d) => ({
+      const records = selectedDays.map((d) => ({
         store_id: storeId,
         store_name: store?.name,
         date: d,
@@ -68,6 +81,7 @@ export default function ScheduleBuilder() {
         created.forEach((s) => { (next[s.date] ||= []).push(s); });
         return next;
       });
+      toast({ title: `Shift added to ${created.length} day${created.length > 1 ? 's' : ''}` });
     } catch (e) {
       toast({ title: 'Error', description: e.message, variant: 'destructive' });
     }
@@ -107,9 +121,9 @@ export default function ScheduleBuilder() {
 
   return (
     <div>
-      <PageHeader title="Schedule" subtitle="Build the weekly schedule" />
+      <PageHeader title="Schedule" subtitle="Select days, then add shifts to all of them" />
 
-      <div className="flex items-center gap-2 mb-4">
+      <div className="flex items-center gap-2 mb-3">
         <select
           value={storeId}
           onChange={(e) => setStoreId(e.target.value)}
@@ -128,19 +142,36 @@ export default function ScheduleBuilder() {
         </Button>
       </div>
 
-      <div className="space-y-3">
-        {dates.map((d) => (
-          <DayCard
-            key={fmtDate(d)}
-            date={d}
-            shifts={shifts[fmtDate(d)] || []}
-            employees={employees}
-            onAdd={(p) => addShift(fmtDate(d), p.employee_id, p.start_time, p.end_time, p.replicate)}
-            onRemove={(id) => removeShift(id, fmtDate(d))}
-            onEdit={(id, patch) => editShift(id, fmtDate(d), patch)}
-          />
-        ))}
+      <div className="flex items-center justify-between mb-2">
+        <span className="text-xs text-muted-foreground">
+          {selectedDays.length} day{selectedDays.length === 1 ? '' : 's'} selected
+        </span>
+        <Button variant="ghost" size="sm" onClick={selectAll} className="h-7 text-xs">
+          {selectedDays.length === dates.length ? 'Clear all' : 'Select all'}
+        </Button>
       </div>
+
+      <div className="overflow-x-auto -mx-4 px-4 pb-2">
+        <div className="flex gap-2 min-w-max">
+          {dates.map((d) => {
+            const ds = fmtDate(d);
+            return (
+              <DayColumn
+                key={ds}
+                date={d}
+                shifts={shifts[ds] || []}
+                employees={employees}
+                selected={selectedDays.includes(ds)}
+                onToggleSelect={() => toggleDay(ds)}
+                onRemove={(id) => removeShift(id, ds)}
+                onEdit={(id, patch) => editShift(id, ds, patch)}
+              />
+            );
+          })}
+        </div>
+      </div>
+
+      <ShiftAddForm employees={employees} selectedCount={selectedDays.length} onAdd={addShift} />
 
       <EmployeeHoursSummary shifts={shifts} employees={employees} />
     </div>

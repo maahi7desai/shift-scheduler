@@ -70,18 +70,17 @@ export default function ScheduleBuilder() {
     }
   };
 
-  const clearAssignment = async (id, date) => {
+  const assignShift = async (id, date, emp) => {
     try {
-      const updated = await base44.entities.Shift.update(id, {
-        employee_id: null,
-        employee_name: null,
-        employee_email: null,
-      });
+      const patch = emp
+        ? { employee_id: emp.id, employee_name: emp.name, employee_email: emp.email }
+        : { employee_id: null, employee_name: null, employee_email: null };
+      const updated = await base44.entities.Shift.update(id, patch);
       setShifts((m) => ({
         ...m,
         [date]: (m[date] || []).map((s) => (s.id === id ? { ...s, ...updated } : s)),
       }));
-      toast({ title: 'Shift is now open' });
+      toast({ title: emp ? `Assigned to ${emp.name}` : 'Shift is now open' });
     } catch (e) {
       toast({ title: 'Error', description: e.message, variant: 'destructive' });
     }
@@ -151,7 +150,7 @@ export default function ScheduleBuilder() {
                     readOnly={!isAdmin}
                     onRemove={(id) => removeShift(id, ds)}
                     onEdit={(id, patch) => editShift(id, ds, patch)}
-                    onClearAssignment={(id) => clearAssignment(id, ds)}
+                    onAssign={(id, emp) => assignShift(id, ds, emp)}
                   />
                 ))}
                 {dayShifts.length === 0 && <div className="text-xs text-muted-foreground py-3 text-center">No shifts</div>}

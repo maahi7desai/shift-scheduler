@@ -1,27 +1,21 @@
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-  AlertDialogTrigger,
-} from '@/components/ui/alert-dialog';
-import { Pencil, Trash2, UserX } from 'lucide-react';
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from '@/components/ui/popover';
+import { Pencil, Trash2, UserCog } from 'lucide-react';
 import TimeInput from '@/components/TimeInput';
+import Avatar from '@/components/Avatar';
 import { formatTime } from '@/lib/schedule';
 
-export default function ShiftRow({ shift, employees, onRemove, onEdit, onClearAssignment, readOnly }) {
+export default function ShiftRow({ shift, employees, onRemove, onEdit, onAssign, readOnly }) {
   const [editing, setEditing] = useState(false);
   const [editStart, setEditStart] = useState(shift.start_time);
   const [editEnd, setEditEnd] = useState(shift.end_time);
 
   const empName = employees.find((e) => e.id === shift.employee_id)?.name || shift.employee_name || 'Open';
-  const isAssigned = !!shift.employee_id;
 
   const save = () => {
     onEdit(shift.id, { start_time: editStart, end_time: editEnd });
@@ -51,28 +45,37 @@ export default function ShiftRow({ shift, employees, onRemove, onEdit, onClearAs
           <Button size="sm" variant="ghost" className="h-8 w-8 p-0" onClick={() => setEditing(true)}>
             <Pencil className="w-4 h-4" />
           </Button>
-          {isAssigned && onClearAssignment && (
-            <AlertDialog>
-              <AlertDialogTrigger asChild>
+          {onAssign && (
+            <Popover>
+              <PopoverTrigger asChild>
                 <Button size="sm" variant="ghost" className="h-8 w-8 p-0">
-                  <UserX className="w-4 h-4 text-muted-foreground" />
+                  <UserCog className="w-4 h-4 text-muted-foreground" />
                 </Button>
-              </AlertDialogTrigger>
-              <AlertDialogContent>
-                <AlertDialogHeader>
-                  <AlertDialogTitle>Make shift open?</AlertDialogTitle>
-                  <AlertDialogDescription>
-                    This will unassign {empName} from this shift and make it available for anyone to pick up.
-                  </AlertDialogDescription>
-                </AlertDialogHeader>
-                <AlertDialogFooter>
-                  <AlertDialogCancel>Cancel</AlertDialogCancel>
-                  <AlertDialogAction onClick={() => onClearAssignment(shift.id)}>
-                    Make open
-                  </AlertDialogAction>
-                </AlertDialogFooter>
-              </AlertDialogContent>
-            </AlertDialog>
+              </PopoverTrigger>
+              <PopoverContent className="w-56 p-0" align="end">
+                <div className="max-h-64 overflow-y-auto">
+                  <button
+                    type="button"
+                    onClick={() => onAssign(shift.id, null)}
+                    className="flex items-center gap-2 w-full px-3 py-2 text-sm hover:bg-accent text-left"
+                  >
+                    <div className="w-7 h-7 rounded-full bg-muted flex items-center justify-center text-xs font-medium text-muted-foreground">Open</div>
+                    <span>Open shift</span>
+                  </button>
+                  {employees.map((emp) => (
+                    <button
+                      key={emp.id}
+                      type="button"
+                      onClick={() => onAssign(shift.id, emp)}
+                      className="flex items-center gap-2 w-full px-3 py-2 text-sm hover:bg-accent text-left"
+                    >
+                      <Avatar name={emp.name} size={28} />
+                      <span className="truncate">{emp.name}</span>
+                    </button>
+                  ))}
+                </div>
+              </PopoverContent>
+            </Popover>
           )}
           <Button size="sm" variant="ghost" className="h-8 w-8 p-0" onClick={() => onRemove(shift.id)}>
             <Trash2 className="w-4 h-4 text-destructive" />

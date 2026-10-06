@@ -32,7 +32,7 @@ export default function MySchedule() {
     if (storeIds.length) {
       queries.push(
         base44.entities.Shift.filter(
-          { employee_id: { $exists: false }, store_id: { $in: storeIds }, date: range },
+          { employee_id: null, store_id: { $in: storeIds }, date: range },
           { sort: 'date', limit: 100 }
         )
       );

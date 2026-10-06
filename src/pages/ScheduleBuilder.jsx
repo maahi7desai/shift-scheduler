@@ -3,12 +3,23 @@ import { Link } from 'react-router-dom';
 import { base44 } from '@/api/base44Client';
 import { useAuth } from '@/lib/AuthContext';
 import { Button } from '@/components/ui/button';
-import { Plus, ChevronLeft, ChevronRight, CalendarDays } from 'lucide-react';
+import { Plus, ChevronLeft, ChevronRight, CalendarDays, Trash2 } from 'lucide-react';
 import PageHeader from '@/components/PageHeader';
 import EmptyState from '@/components/EmptyState';
 import ShiftRow from '@/components/ShiftRow';
 import EmployeeHoursSummary from '@/components/EmployeeHoursSummary';
 import { useToast } from '@/components/ui/use-toast';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from '@/components/ui/alert-dialog';
 import { getWeekStart, weekDates, fmtDate, fmtDayNum, fmtDayLabel } from '@/lib/schedule';
 
 export default function ScheduleBuilder() {
@@ -70,6 +81,18 @@ export default function ScheduleBuilder() {
     }
   };
 
+  const clearWeek = async () => {
+    const allIds = Object.values(shifts).flat().map((s) => s.id);
+    if (!allIds.length) return;
+    try {
+      await base44.entities.Shift.deleteMany({ _id: { $in: allIds } });
+      setShifts({});
+      toast({ title: 'All shifts cleared for this week' });
+    } catch (e) {
+      toast({ title: 'Error', description: e.message, variant: 'destructive' });
+    }
+  };
+
   const assignShift = async (id, date, emp) => {
     try {
       const patch = emp
@@ -105,9 +128,30 @@ export default function ScheduleBuilder() {
         title="Schedule"
         subtitle="Build the weekly schedule"
         action={isAdmin ? (
-          <Button size="sm" asChild>
-            <Link to={createUrl}><Plus className="w-4 h-4 mr-1" />Shift</Link>
-          </Button>
+          <div className="flex items-center gap-2">
+            <AlertDialog>
+              <AlertDialogTrigger asChild>
+                <Button size="sm" variant="outline">
+                  <Trash2 className="w-4 h-4 mr-1" />Clear week
+                </Button>
+              </AlertDialogTrigger>
+              <AlertDialogContent>
+                <AlertDialogHeader>
+                  <AlertDialogTitle>Clear all shifts this week?</AlertDialogTitle>
+                  <AlertDialogDescription>
+                    This will permanently delete every shift in the current week for this store. This action cannot be undone.
+                  </AlertDialogDescription>
+                </AlertDialogHeader>
+                <AlertDialogFooter>
+                  <AlertDialogCancel>Cancel</AlertDialogCancel>
+                  <AlertDialogAction onClick={clearWeek}>Clear all</AlertDialogAction>
+                </AlertDialogFooter>
+              </AlertDialogContent>
+            </AlertDialog>
+            <Button size="sm" asChild>
+              <Link to={createUrl}><Plus className="w-4 h-4 mr-1" />Shift</Link>
+            </Button>
+          </div>
         ) : null}
       />
 

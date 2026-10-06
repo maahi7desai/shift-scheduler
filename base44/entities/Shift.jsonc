@@ -26,6 +26,9 @@
     },
     "end_time": {
       "type": "string"
+    },
+    "notes": {
+      "type": "string"
     }
   },
   "required": [

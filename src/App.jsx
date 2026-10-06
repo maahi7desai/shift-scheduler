@@ -16,6 +16,7 @@ import MySchedule from '@/pages/MySchedule';
 import Swaps from '@/pages/Swaps';
 import Calendar from '@/pages/Calendar';
 import Profile from '@/pages/Profile';
+import CreateShift from '@/pages/CreateShift';
 import Login from '@/pages/Login';
 import Register from '@/pages/Register';
 import ForgotPassword from '@/pages/ForgotPassword';
@@ -65,6 +66,7 @@ const AuthenticatedApp = () => {
           <Route path="/calendar" element={<Calendar />} />
           <Route path="/profile" element={<Profile />} />
         </Route>
+        <Route path="/schedule/new" element={<CreateShift />} />
       </Route>
       <Route path="*" element={<PageNotFound />} />
     </Routes>

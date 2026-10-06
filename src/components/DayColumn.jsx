@@ -4,7 +4,7 @@ import { Pencil, Trash2 } from 'lucide-react';
 import TimeInput from '@/components/TimeInput';
 import { fmtDayLabel, fmtDayNum, formatTime } from '@/lib/schedule';
 
-export default function DayColumn({ date, shifts, employees, selected, onToggleSelect, onRemove, onEdit }) {
+export default function DayColumn({ date, shifts, employees, onRemove, onEdit }) {
   const [editingId, setEditingId] = useState(null);
   const [editStart, setEditStart] = useState('');
   const [editEnd, setEditEnd] = useState('');
@@ -21,15 +21,11 @@ export default function DayColumn({ date, shifts, employees, selected, onToggleS
   };
 
   return (
-    <div className={`min-w-[130px] flex-1 rounded-xl border bg-card overflow-hidden ${selected ? 'border-foreground ring-1 ring-foreground/30' : 'border-border'}`}>
-      <button
-        type="button"
-        onClick={onToggleSelect}
-        className={`w-full text-left px-3 py-2 border-b border-border ${selected ? 'bg-foreground text-background' : 'bg-muted/30'}`}
-      >
-        <div className={`text-xs font-medium ${selected ? 'text-background/80' : 'text-muted-foreground'}`}>{fmtDayLabel(date)}</div>
+    <div className="min-w-[130px] flex-1 rounded-xl border border-border bg-card overflow-hidden">
+      <div className="px-3 py-2 border-b border-border bg-muted/30">
+        <div className="text-xs font-medium text-muted-foreground">{fmtDayLabel(date)}</div>
         <div className="text-base font-semibold leading-tight">{fmtDayNum(date)}</div>
-      </button>
+      </div>
       <div className="p-1.5 space-y-1.5">
         {shifts.map((s) =>
           editingId === s.id ? (

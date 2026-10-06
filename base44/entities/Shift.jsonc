@@ -38,23 +38,7 @@
     "end_time"
   ],
   "rls": {
-    "read": {
-      "$or": [
-        {
-          "data.employee_email": "{{user.email}}"
-        },
-        {
-          "data.employee_id": {
-            "$exists": false
-          }
-        },
-        {
-          "user_condition": {
-            "role": "admin"
-          }
-        }
-      ]
-    },
+    "read": {},
     "create": {
       "user_condition": {
         "role": "admin"

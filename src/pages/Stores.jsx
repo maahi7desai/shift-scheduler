@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Link, Navigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { base44 } from '@/api/base44Client';
 import { useAuth } from '@/lib/AuthContext';
 import { Button } from '@/components/ui/button';
@@ -19,13 +19,23 @@ export default function Stores() {
   const [open, setOpen] = useState(false);
   const [submitting, setSubmitting] = useState(false);
 
-  const load = async () => {
-    const { items } = await base44.entities.Store.filter({}, { sort: '-is_default', limit: 50 });
-    setStores(items);
-  };
-  useEffect(() => { load(); }, []);
+  const isAdmin = user?.role === 'admin';
 
-  if (user && user.role !== 'admin') return <Navigate to="/my-schedule" replace />;
+  const load = async () => {
+    if (!user) return;
+    if (isAdmin) {
+      const { items } = await base44.entities.Store.filter({}, { sort: '-is_default', limit: 50 });
+      setStores(items);
+    } else {
+      const [storeRes, empRes] = await Promise.all([
+        base44.entities.Store.filter({}, { sort: '-is_default', limit: 50 }),
+        base44.entities.Employee.filter({ email: user.email }, { limit: 1 }),
+      ]);
+      const myIds = empRes.items[0]?.store_ids || [];
+      setStores(storeRes.items.filter((s) => myIds.includes(s.id)));
+    }
+  };
+  useEffect(() => { load(); }, [user]);
 
   const create = async (data) => {
     setSubmitting(true);
@@ -56,12 +66,12 @@ export default function Stores() {
     <div>
       <PageHeader
         title="Stores"
-        subtitle="Manage your store locations"
-        action={
+        subtitle={isAdmin ? 'Manage your store locations' : 'Stores you are assigned to'}
+        action={isAdmin ? (
           <Button size="sm" onClick={() => setOpen(true)}>
             <Plus className="w-4 h-4 mr-1" />Add
           </Button>
-        }
+        ) : undefined}
       />
 
       {!stores ? (
@@ -69,13 +79,13 @@ export default function Stores() {
       ) : stores.length === 0 ? (
         <EmptyState
           icon={StoreIcon}
-          title="No stores yet"
-          description="Create your first store to start building schedules. The first store becomes your default."
-          action={
+          title={isAdmin ? 'No stores yet' : 'No stores assigned'}
+          description={isAdmin ? 'Create your first store to start building schedules. The first store becomes your default.' : 'You are not assigned to any stores yet. Contact your manager.'}
+          action={isAdmin ? (
             <Button onClick={() => setOpen(true)}>
               <Plus className="w-4 h-4 mr-1" />Create store
             </Button>
-          }
+          ) : undefined}
         />
       ) : (
         <div className="space-y-3">
@@ -98,16 +108,18 @@ export default function Stores() {
               <div className="mt-3">
                 <WorkingHoursDisplay storeId={s.id} />
               </div>
-              <div className="flex gap-2 mt-3">
-                <Button variant="outline" size="sm" asChild>
-                  <Link to={`/stores/${s.id}`}>Edit store</Link>
-                </Button>
-                {!s.is_default && (
-                  <Button variant="ghost" size="sm" onClick={() => makeDefault(s)}>
-                    <Star className="w-4 h-4 mr-1" />Set default
+              {isAdmin && (
+                <div className="flex gap-2 mt-3">
+                  <Button variant="outline" size="sm" asChild>
+                    <Link to={`/stores/${s.id}`}>Edit store</Link>
                   </Button>
-                )}
-              </div>
+                  {!s.is_default && (
+                    <Button variant="ghost" size="sm" onClick={() => makeDefault(s)}>
+                      <Star className="w-4 h-4 mr-1" />Set default
+                    </Button>
+                  )}
+                </div>
+              )}
             </div>
           ))}
         </div>

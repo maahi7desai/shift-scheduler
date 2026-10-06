@@ -51,15 +51,13 @@ export default function ScheduleBuilder() {
 
   const addShift = async (date, employee_id, start_time, end_time) => {
     try {
-      const emp = employees.find((e) => e.id === employee_id);
+      const emp = employee_id ? employees.find((e) => e.id === employee_id) : null;
       const store = stores.find((s) => s.id === storeId);
       const created = await base44.entities.Shift.create({
         store_id: storeId,
         store_name: store?.name,
         date,
-        employee_id,
-        employee_name: emp?.name,
-        employee_email: emp?.email,
+        ...(emp ? { employee_id, employee_name: emp.name, employee_email: emp.email } : {}),
         start_time,
         end_time,
       });

@@ -15,6 +15,7 @@ import ScheduleBuilder from '@/pages/ScheduleBuilder';
 import MySchedule from '@/pages/MySchedule';
 import Swaps from '@/pages/Swaps';
 import Calendar from '@/pages/Calendar';
+import Profile from '@/pages/Profile';
 import Login from '@/pages/Login';
 import Register from '@/pages/Register';
 import ForgotPassword from '@/pages/ForgotPassword';
@@ -62,6 +63,7 @@ const AuthenticatedApp = () => {
           <Route path="/my-schedule" element={<MySchedule />} />
           <Route path="/swaps" element={<Swaps />} />
           <Route path="/calendar" element={<Calendar />} />
+          <Route path="/profile" element={<Profile />} />
         </Route>
       </Route>
       <Route path="*" element={<PageNotFound />} />

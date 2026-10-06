@@ -14,8 +14,7 @@ export default function DayCard({ date, shifts, employees, onAdd, onRemove, onEd
   const [editEnd, setEditEnd] = useState('');
 
   const submit = () => {
-    if (!employeeId) return;
-    onAdd({ employee_id: employeeId, start_time: start, end_time: end });
+    onAdd({ employee_id: employeeId || null, start_time: start, end_time: end });
     setAdding(false);
     setEmployeeId('');
     setStart('11:30');
@@ -61,7 +60,7 @@ export default function DayCard({ date, shifts, employees, onAdd, onRemove, onEd
           ) : (
             <div key={s.id} className="flex items-center gap-3 px-4 py-2.5">
               <div className="w-28 font-medium text-sm truncate">
-                {employees.find((e) => e.id === s.employee_id)?.name || s.employee_name}
+                {employees.find((e) => e.id === s.employee_id)?.name || s.employee_name || 'Open'}
               </div>
               <div className="text-sm text-muted-foreground flex-1">
                 {formatTime(s.start_time)} – {formatTime(s.end_time)}
@@ -85,7 +84,7 @@ export default function DayCard({ date, shifts, employees, onAdd, onRemove, onEd
               onChange={(e) => setEmployeeId(e.target.value)}
               className="w-full h-9 rounded-md border border-input bg-background px-2 text-sm"
             >
-              <option value="">Select employee…</option>
+              <option value="">Open shift (unassigned)</option>
               {employees.map((e) => (
                 <option key={e.id} value={e.id}>{e.name}</option>
               ))}
@@ -96,7 +95,7 @@ export default function DayCard({ date, shifts, employees, onAdd, onRemove, onEd
               <TimeInput value={end} onChange={setEnd} className="flex-1" />
             </div>
             <div className="flex gap-2">
-              <Button size="sm" onClick={submit} disabled={!employeeId}>Add</Button>
+              <Button size="sm" onClick={submit}>Add</Button>
               <Button size="sm" variant="ghost" onClick={() => setAdding(false)}>Cancel</Button>
             </div>
           </div>

@@ -30,7 +30,9 @@ export default function DayCard({ date, shifts, employees, onAdd, onRemove }) {
       <div className="divide-y divide-border">
         {shifts.map((s) => (
           <div key={s.id} className="flex items-center gap-3 px-4 py-2.5">
-            <div className="w-28 font-medium text-sm truncate">{s.employee_name}</div>
+            <div className="w-28 font-medium text-sm truncate">
+              {employees.find((e) => e.id === s.employee_id)?.name || s.employee_name}
+            </div>
             <div className="text-sm text-muted-foreground flex-1">
               {formatTime(s.start_time)} – {formatTime(s.end_time)}
             </div>

@@ -4,7 +4,7 @@ import { Pencil, Trash2 } from 'lucide-react';
 import TimeInput from '@/components/TimeInput';
 import { formatTime } from '@/lib/schedule';
 
-export default function ShiftRow({ shift, employees, onRemove, onEdit }) {
+export default function ShiftRow({ shift, employees, onRemove, onEdit, readOnly }) {
   const [editing, setEditing] = useState(false);
   const [editStart, setEditStart] = useState(shift.start_time);
   const [editEnd, setEditEnd] = useState(shift.end_time);
@@ -34,12 +34,16 @@ export default function ShiftRow({ shift, employees, onRemove, onEdit }) {
         <div className="text-sm font-medium">{formatTime(shift.start_time)} – {formatTime(shift.end_time)}</div>
         <div className="text-xs text-muted-foreground">{empName}</div>
       </div>
-      <Button size="sm" variant="ghost" className="h-8 w-8 p-0" onClick={() => setEditing(true)}>
-        <Pencil className="w-4 h-4" />
-      </Button>
-      <Button size="sm" variant="ghost" className="h-8 w-8 p-0" onClick={() => onRemove(shift.id)}>
-        <Trash2 className="w-4 h-4 text-destructive" />
-      </Button>
+      {!readOnly && (
+        <>
+          <Button size="sm" variant="ghost" className="h-8 w-8 p-0" onClick={() => setEditing(true)}>
+            <Pencil className="w-4 h-4" />
+          </Button>
+          <Button size="sm" variant="ghost" className="h-8 w-8 p-0" onClick={() => onRemove(shift.id)}>
+            <Trash2 className="w-4 h-4 text-destructive" />
+          </Button>
+        </>
+      )}
     </div>
   );
 }

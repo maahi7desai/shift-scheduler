@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Link, Navigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { base44 } from '@/api/base44Client';
 import { useAuth } from '@/lib/AuthContext';
 import { Button } from '@/components/ui/button';
@@ -47,7 +47,7 @@ export default function ScheduleBuilder() {
     })();
   }, [storeId, weekStart]);
 
-  if (user && user.role !== 'admin') return <Navigate to="/my-schedule" replace />;
+  const isAdmin = user?.role === 'admin';
 
   const removeShift = async (id, date) => {
     try {
@@ -88,11 +88,11 @@ export default function ScheduleBuilder() {
       <PageHeader
         title="Schedule"
         subtitle="Build the weekly schedule"
-        action={
+        action={isAdmin ? (
           <Button size="sm" asChild>
             <Link to={createUrl}><Plus className="w-4 h-4 mr-1" />Shift</Link>
           </Button>
-        }
+        ) : null}
       />
 
       <div className="flex items-center gap-2 mb-3">
@@ -131,6 +131,7 @@ export default function ScheduleBuilder() {
                     key={s.id}
                     shift={s}
                     employees={employees}
+                    readOnly={!isAdmin}
                     onRemove={(id) => removeShift(id, ds)}
                     onEdit={(id, patch) => editShift(id, ds, patch)}
                   />

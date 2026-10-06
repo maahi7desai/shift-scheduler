@@ -4,7 +4,7 @@ import { base44 } from '@/api/base44Client';
 import { useAuth } from '@/lib/AuthContext';
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
-import { Plus, Trash2, Users as UsersIcon } from 'lucide-react';
+import { Plus, Trash2, Users as UsersIcon, Mail } from 'lucide-react';
 import PageHeader from '@/components/PageHeader';
 import EmptyState from '@/components/EmptyState';
 import EmployeeForm from '@/components/EmployeeForm';
@@ -41,7 +41,16 @@ export default function Employees() {
     try {
       const store_ids = data.store_ids.length ? data.store_ids : defaultStore ? [defaultStore.id] : [];
       await base44.entities.Employee.create({ ...data, store_ids });
-      toast({ title: 'Employee added' });
+      if (data.email) {
+        try {
+          await base44.users.inviteUser(data.email, 'user');
+          toast({ title: 'Employee added', description: `Invite sent to ${data.email}` });
+        } catch {
+          toast({ title: 'Employee added', description: 'Could not send invite email.' });
+        }
+      } else {
+        toast({ title: 'Employee added' });
+      }
       setOpen(false);
       load();
     } catch (e) {
@@ -62,6 +71,19 @@ export default function Employees() {
       toast({ title: 'Error', description: e.message, variant: 'destructive' });
     } finally {
       setSubmitting(false);
+    }
+  };
+
+  const invite = async (emp) => {
+    if (!emp.email) {
+      toast({ title: 'No email on file', description: 'Add an email to this employee first.', variant: 'destructive' });
+      return;
+    }
+    try {
+      await base44.users.inviteUser(emp.email, 'user');
+      toast({ title: 'Invite sent', description: emp.email });
+    } catch (e) {
+      toast({ title: 'Error', description: e.message, variant: 'destructive' });
     }
   };
 
@@ -118,6 +140,9 @@ export default function Employees() {
                     {emp.title || emp.store_ids?.map(storeName).filter(Boolean).join(', ')}
                   </div>
                 </div>
+                <Button variant="ghost" size="sm" onClick={() => invite(emp)}>
+                  <Mail className="w-4 h-4" />
+                </Button>
                 <Button variant="ghost" size="sm" onClick={() => setEditTarget(emp)}>Edit</Button>
                 <Button variant="ghost" size="sm" onClick={() => remove(emp)}>
                   <Trash2 className="w-4 h-4 text-destructive" />

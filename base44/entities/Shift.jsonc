@@ -31,7 +31,6 @@
   "required": [
     "store_id",
     "date",
-    "employee_id",
     "start_time",
     "end_time"
   ],
@@ -40,6 +39,11 @@
       "$or": [
         {
           "data.employee_email": "{{user.email}}"
+        },
+        {
+          "data.employee_id": {
+            "$exists": false
+          }
         },
         {
           "user_condition": {

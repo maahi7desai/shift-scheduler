@@ -4,7 +4,7 @@ import { base44 } from '@/api/base44Client';
 import { useAuth } from '@/lib/AuthContext';
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
-import { Plus, Trash2, Users as UsersIcon, Mail } from 'lucide-react';
+import { Plus, Trash2, Users as UsersIcon, Mail, Pencil } from 'lucide-react';
 import PageHeader from '@/components/PageHeader';
 import EmptyState from '@/components/EmptyState';
 import EmployeeForm from '@/components/EmployeeForm';
@@ -143,7 +143,9 @@ export default function Employees() {
                 <Button variant="ghost" size="sm" onClick={() => invite(emp)}>
                   <Mail className="w-4 h-4" />
                 </Button>
-                <Button variant="ghost" size="sm" onClick={() => setEditTarget(emp)}>Edit</Button>
+                <Button variant="ghost" size="sm" className="h-8 w-8 p-0" onClick={() => setEditTarget(emp)}>
+                  <Pencil className="w-4 h-4" />
+                </Button>
                 <Button variant="ghost" size="sm" onClick={() => remove(emp)}>
                   <Trash2 className="w-4 h-4 text-destructive" />
                 </Button>

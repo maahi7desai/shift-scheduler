@@ -14,7 +14,7 @@ const employeeTabs = [
   { to: '/stores', label: 'Stores', icon: Store },
   { to: '/profile', label: 'Profile', icon: Users },
   { to: '/my-schedule', label: 'Shifts', icon: Clock },
-  { to: '/schedule', label: 'Schedule', icon: Calendar },
+  { to: '/calendar', label: 'Schedule', icon: Calendar },
 ];
 
 export default function Layout() {

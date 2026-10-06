@@ -42,14 +42,14 @@ export default function ShiftRow({ shift, employees, onRemove, onEdit, onAssign,
       </div>
       {!readOnly && (
         <>
-          <Button size="sm" variant="ghost" className="h-8 w-8 p-0" onClick={() => setEditing(true)}>
+          <Button size="sm" variant="ghost" className="h-8 w-8 p-0 text-muted-foreground" onClick={() => setEditing(true)}>
             <Pencil className="w-4 h-4" />
           </Button>
           {onAssign && (
             <Popover>
               <PopoverTrigger asChild>
-                <Button size="sm" variant="ghost" className="h-8 w-8 p-0">
-                  <UserCog className="w-4 h-4 text-muted-foreground" />
+                <Button size="sm" variant="ghost" className="h-8 w-8 p-0 text-muted-foreground">
+                  <UserCog className="w-4 h-4" />
                 </Button>
               </PopoverTrigger>
               <PopoverContent className="w-56 p-0" align="end">
@@ -77,8 +77,8 @@ export default function ShiftRow({ shift, employees, onRemove, onEdit, onAssign,
               </PopoverContent>
             </Popover>
           )}
-          <Button size="sm" variant="ghost" className="h-8 w-8 p-0" onClick={() => onRemove(shift.id)}>
-            <Trash2 className="w-4 h-4 text-muted-foreground" />
+          <Button size="sm" variant="ghost" className="h-8 w-8 p-0 text-muted-foreground" onClick={() => onRemove(shift.id)}>
+            <Trash2 className="w-4 h-4" />
           </Button>
         </>
       )}

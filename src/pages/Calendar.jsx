@@ -4,6 +4,7 @@ import { useAuth } from '@/lib/AuthContext';
 import { ChevronLeft, ChevronRight, Star } from 'lucide-react';
 import CalendarGrid from '@/components/CalendarGrid';
 import { format, parseISO } from 'date-fns';
+import { formatTime } from '@/lib/schedule';
 
 export default function Calendar() {
   const { user } = useAuth();
@@ -93,10 +94,9 @@ export default function Calendar() {
                     {s.employee_name || 'Shift'} · {s.store_name}
                   </div>
                   <div className="text-xs text-muted-foreground">
-                    {format(parseISO(s.date + 'T00:00:00'), 'MMM d')} · {s.start_time}–{s.end_time}
+                    {format(parseISO(s.date + 'T00:00:00'), 'MMM d')} · {formatTime(s.start_time)}–{formatTime(s.end_time)}
                   </div>
                 </div>
-                <div className="text-xs text-muted-foreground">{s.start_time}</div>
               </div>
             ))}
           </div>

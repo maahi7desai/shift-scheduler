@@ -70,6 +70,23 @@ export default function ScheduleBuilder() {
     }
   };
 
+  const clearAssignment = async (id, date) => {
+    try {
+      const updated = await base44.entities.Shift.update(id, {
+        employee_id: null,
+        employee_name: null,
+        employee_email: null,
+      });
+      setShifts((m) => ({
+        ...m,
+        [date]: (m[date] || []).map((s) => (s.id === id ? { ...s, ...updated } : s)),
+      }));
+      toast({ title: 'Shift is now open' });
+    } catch (e) {
+      toast({ title: 'Error', description: e.message, variant: 'destructive' });
+    }
+  };
+
   if (stores && stores.length === 0) {
     return (
       <EmptyState
@@ -134,6 +151,7 @@ export default function ScheduleBuilder() {
                     readOnly={!isAdmin}
                     onRemove={(id) => removeShift(id, ds)}
                     onEdit={(id, patch) => editShift(id, ds, patch)}
+                    onClearAssignment={(id) => clearAssignment(id, ds)}
                   />
                 ))}
                 {dayShifts.length === 0 && <div className="text-xs text-muted-foreground py-3 text-center">No shifts</div>}

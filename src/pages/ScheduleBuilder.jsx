@@ -6,10 +6,10 @@ import { Button } from '@/components/ui/button';
 import { Plus, ChevronLeft, ChevronRight, CalendarDays } from 'lucide-react';
 import PageHeader from '@/components/PageHeader';
 import EmptyState from '@/components/EmptyState';
-import DayColumn from '@/components/DayColumn';
+import ShiftRow from '@/components/ShiftRow';
 import EmployeeHoursSummary from '@/components/EmployeeHoursSummary';
 import { useToast } from '@/components/ui/use-toast';
-import { getWeekStart, weekDates, fmtDate, fmtDayNum } from '@/lib/schedule';
+import { getWeekStart, weekDates, fmtDate, fmtDayNum, fmtDayLabel } from '@/lib/schedule';
 
 export default function ScheduleBuilder() {
   const { user } = useAuth();
@@ -114,22 +114,32 @@ export default function ScheduleBuilder() {
         </Button>
       </div>
 
-      <div className="overflow-x-auto -mx-4 px-4 pb-2">
-        <div className="flex gap-2 min-w-max">
-          {dates.map((d) => {
-            const ds = fmtDate(d);
-            return (
-              <DayColumn
-                key={ds}
-                date={d}
-                shifts={shifts[ds] || []}
-                employees={employees}
-                onRemove={(id) => removeShift(id, ds)}
-                onEdit={(id, patch) => editShift(id, ds, patch)}
-              />
-            );
-          })}
-        </div>
+      <div className="space-y-4">
+        {dates.map((d) => {
+          const ds = fmtDate(d);
+          const dayShifts = shifts[ds] || [];
+          return (
+            <div key={ds}>
+              <div className="flex items-center gap-2 mb-1">
+                <div className="text-sm font-semibold">{fmtDayLabel(d)}</div>
+                <div className="text-sm text-muted-foreground">{fmtDayNum(d)}</div>
+                <div className="text-xs text-muted-foreground ml-auto">{dayShifts.length} shift{dayShifts.length === 1 ? '' : 's'}</div>
+              </div>
+              <div className="rounded-xl border border-border bg-card px-3">
+                {dayShifts.map((s) => (
+                  <ShiftRow
+                    key={s.id}
+                    shift={s}
+                    employees={employees}
+                    onRemove={(id) => removeShift(id, ds)}
+                    onEdit={(id, patch) => editShift(id, ds, patch)}
+                  />
+                ))}
+                {dayShifts.length === 0 && <div className="text-xs text-muted-foreground py-3 text-center">No shifts</div>}
+              </div>
+            </div>
+          );
+        })}
       </div>
 
       <EmployeeHoursSummary shifts={shifts} employees={employees} />

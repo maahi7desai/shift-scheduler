@@ -24,7 +24,7 @@ export default function Layout() {
       <main className="flex-1 mx-auto w-full max-w-md px-4 pt-6 pb-24">
         <Outlet />
       </main>
-      <nav className="fixed bottom-0 inset-x-0 border-t border-border bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/80">
+      <nav className="fixed bottom-1.5 inset-x-0 border-t border-border bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/80">
         <div className="mx-auto max-w-md flex">
           {tabs.map((t) => (
             <NavLink

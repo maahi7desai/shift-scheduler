@@ -3,17 +3,17 @@ import { useAuth } from '@/lib/AuthContext';
 import { CalendarDays, Store, Users, Repeat2, Clock, Calendar } from 'lucide-react';
 
 const ownerTabs = [
-  { to: '/schedule', label: 'Schedule', icon: CalendarDays },
   { to: '/stores', label: 'Stores', icon: Store },
   { to: '/employees', label: 'Team', icon: Users },
+  { to: '/schedule', label: 'Shifts', icon: CalendarDays },
   { to: '/swaps', label: 'Swaps', icon: Repeat2 },
-  { to: '/calendar', label: 'Calendar', icon: Calendar },
+  { to: '/calendar', label: 'Schedule', icon: Calendar },
 ];
 
 const employeeTabs = [
   { to: '/my-schedule', label: 'My Shifts', icon: Clock },
   { to: '/swaps', label: 'Swaps', icon: Repeat2 },
-  { to: '/calendar', label: 'Calendar', icon: Calendar },
+  { to: '/calendar', label: 'Schedule', icon: Calendar },
 ];
 
 export default function Layout() {

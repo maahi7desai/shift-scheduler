@@ -99,7 +99,22 @@ export default function CreateShift() {
         <span className="inline-block text-xs rounded-full bg-amber-100 text-amber-800 px-2.5 py-1">Unpublished</span>
 
         <div>
-          <div className="text-xs text-muted-foreground mb-2">Repeat on</div>
+          <div className="flex items-center justify-between mb-2">
+            <div className="text-xs text-muted-foreground">Repeat on</div>
+            <button
+              type="button"
+              onClick={() => {
+                const all = dates.map((d) => format(d, 'yyyy-MM-dd'));
+                const allSelected = all.length === selectedDays.length && all.every((d) => selectedDays.includes(d));
+                setSelectedDays(allSelected ? [] : all);
+              }}
+              className="text-xs font-medium text-primary"
+            >
+              {dates.length === selectedDays.length && dates.every((d) => selectedDays.includes(format(d, 'yyyy-MM-dd')))
+                ? 'Clear all'
+                : 'Select all'}
+            </button>
+          </div>
           <div className="flex justify-between gap-1.5">
             {dates.map((d) => {
               const ds = format(d, 'yyyy-MM-dd');

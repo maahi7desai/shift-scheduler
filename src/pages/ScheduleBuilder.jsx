@@ -78,6 +78,18 @@ export default function ScheduleBuilder() {
     }
   };
 
+  const editShift = async (id, date, patch) => {
+    try {
+      const updated = await base44.entities.Shift.update(id, patch);
+      setShifts((m) => ({
+        ...m,
+        [date]: (m[date] || []).map((s) => (s.id === id ? { ...s, ...updated } : s)),
+      }));
+    } catch (e) {
+      toast({ title: 'Error', description: e.message, variant: 'destructive' });
+    }
+  };
+
   if (stores && stores.length === 0) {
     return (
       <EmptyState
@@ -121,6 +133,7 @@ export default function ScheduleBuilder() {
             employees={employees}
             onAdd={(p) => addShift(fmtDate(d), p.employee_id, p.start_time, p.end_time)}
             onRemove={(id) => removeShift(id, fmtDate(d))}
+            onEdit={(id, patch) => editShift(id, fmtDate(d), patch)}
           />
         ))}
       </div>

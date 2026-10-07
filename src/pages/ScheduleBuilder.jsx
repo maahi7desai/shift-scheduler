@@ -31,7 +31,6 @@ export default function ScheduleBuilder() {
   const [employees, setEmployees] = useState([]);
   const [shifts, setShifts] = useState({});
   const [employeeId, setEmployeeId] = useState('');
-  const [openOnly, setOpenOnly] = useState(false);
 
   const dates = weekDates(weekStart);
 
@@ -174,6 +173,7 @@ export default function ScheduleBuilder() {
           onChange={(e) => setEmployeeId(e.target.value)}
           className="h-9 rounded-md border border-input bg-background px-2 text-sm">
           <option value="">All employees</option>
+          <option value="open">Open shift</option>
           {employees.map((emp) =>
           <option key={emp.id} value={emp.id}>{emp.name}</option>
           )}
@@ -195,20 +195,10 @@ export default function ScheduleBuilder() {
         </div>
       </div>
 
-      <div className="flex items-center gap-2 mb-3">
-        <Button
-          size="sm"
-          variant={openOnly ? 'default' : 'outline'}
-          onClick={() => setOpenOnly((v) => !v)}
-          className="whitespace-nowrap">
-          Open
-        </Button>
-      </div>
-
       <div className="space-y-4">
         {dates.map((d) => {
           const ds = fmtDate(d);
-          const dayShifts = (shifts[ds] || []).filter((s) => (!openOnly || !s.employee_id) && (!employeeId || s.employee_id === employeeId));
+          const dayShifts = (shifts[ds] || []).filter((s) => (employeeId !== 'open' || !s.employee_id) && (!employeeId || employeeId === 'open' || s.employee_id === employeeId));
           return (
             <div key={ds}>
               <div className="flex items-center gap-2 mb-1">

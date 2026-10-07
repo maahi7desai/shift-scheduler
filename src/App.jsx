@@ -17,6 +17,7 @@ import Swaps from '@/pages/Swaps';
 import Calendar from '@/pages/Calendar';
 import Profile from '@/pages/Profile';
 import CreateShift from '@/pages/CreateShift';
+import RoleSelection from '@/pages/RoleSelection';
 import Login from '@/pages/Login';
 import Register from '@/pages/Register';
 import ForgotPassword from '@/pages/ForgotPassword';
@@ -25,7 +26,7 @@ import Layout from '@/components/Layout';
 import ProtectedRoute from '@/components/ProtectedRoute';
 
 const AuthenticatedApp = () => {
-  const { isLoadingAuth, isLoadingPublicSettings, authError, navigateToLogin } = useAuth();
+  const { user, isLoadingAuth, isLoadingPublicSettings, authError, navigateToLogin } = useAuth();
 
   // Show loading spinner while checking app public settings or auth
   if (isLoadingPublicSettings || isLoadingAuth) {
@@ -47,6 +48,16 @@ const AuthenticatedApp = () => {
     }
   }
 
+  // Redirect users who haven't completed role selection
+  if (user && user.role_selected !== true) {
+    return (
+      <Routes>
+        <Route path="/role-selection" element={<RoleSelection />} />
+        <Route path="*" element={<Navigate to="/role-selection" replace />} />
+      </Routes>
+    );
+  }
+
   // Render the main app
   return (
     <Routes>
@@ -54,6 +65,7 @@ const AuthenticatedApp = () => {
       <Route path="/register" element={<Register />} />
       <Route path="/forgot-password" element={<ForgotPassword />} />
       <Route path="/reset-password" element={<ResetPassword />} />
+      <Route path="/role-selection" element={<RoleSelection />} />
       <Route element={<ProtectedRoute unauthenticatedElement={<Navigate to="/login" replace />} />}>
         <Route element={<Layout />}>
           <Route path="/" element={<Home />} />

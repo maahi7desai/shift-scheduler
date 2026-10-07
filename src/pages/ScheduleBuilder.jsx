@@ -30,6 +30,7 @@ export default function ScheduleBuilder() {
   const [weekStart, setWeekStart] = useState(getWeekStart());
   const [employees, setEmployees] = useState([]);
   const [shifts, setShifts] = useState({});
+  const [employeeId, setEmployeeId] = useState('');
   const [openOnly, setOpenOnly] = useState(false);
 
   const dates = weekDates(weekStart);
@@ -53,6 +54,7 @@ export default function ScheduleBuilder() {
       )]
       );
       setEmployees(empRes.items);
+      setEmployeeId('');
       const map = {};
       shiftRes.items.forEach((s) => {(map[s.date] ||= []).push(s);});
       Object.values(map).forEach((list) => list.sort((a, b) => (a.start_time || '').localeCompare(b.start_time || '')));
@@ -157,16 +159,43 @@ export default function ScheduleBuilder() {
         null} />
       
 
-      <div className="flex items-center gap-2 mb-3">
+      <div className="grid grid-cols-3 gap-2 mb-3">
         <select
           value={storeId}
           onChange={(e) => setStoreId(e.target.value)}
-          className="h-9 rounded-md border border-input bg-background px-2 text-sm flex-1">
-          
+          className="h-9 rounded-md border border-input bg-background px-2 text-sm">
+          <option value="" disabled>Store</option>
           {stores?.map((s) =>
           <option key={s.id} value={s.id}>{s.name}</option>
           )}
         </select>
+        <select
+          value={employeeId}
+          onChange={(e) => setEmployeeId(e.target.value)}
+          className="h-9 rounded-md border border-input bg-background px-2 text-sm">
+          <option value="">All employees</option>
+          {employees.map((emp) =>
+          <option key={emp.id} value={emp.id}>{emp.name}</option>
+          )}
+        </select>
+        <div className="flex items-center justify-between rounded-md border border-input bg-background px-1 h-9">
+          <button
+            type="button"
+            onClick={() => setWeekStart((ws) => new Date(ws.getTime() - 7 * 864e5))}
+            className="flex h-7 w-7 items-center justify-center text-muted-foreground hover:text-accent-foreground">
+            <ChevronLeft className="w-4 h-4" />
+          </button>
+          <span className="text-sm font-medium whitespace-nowrap">{fmtDayNum(weekStart)} – {fmtDayNum(dates[6])}</span>
+          <button
+            type="button"
+            onClick={() => setWeekStart((ws) => new Date(ws.getTime() + 7 * 864e5))}
+            className="flex h-7 w-7 items-center justify-center text-muted-foreground hover:text-accent-foreground">
+            <ChevronRight className="w-4 h-4" />
+          </button>
+        </div>
+      </div>
+
+      <div className="flex items-center gap-2 mb-3">
         <Button
           size="sm"
           variant={openOnly ? 'default' : 'outline'}
@@ -174,19 +203,12 @@ export default function ScheduleBuilder() {
           className="whitespace-nowrap">
           Open
         </Button>
-        <Button variant="outline" size="sm" onClick={() => setWeekStart((ws) => new Date(ws.getTime() - 7 * 864e5))}>
-          <ChevronLeft className="w-4 h-4" />
-        </Button>
-        <div className="text-sm font-medium px-1 whitespace-nowrap">{fmtDayNum(weekStart)} – {fmtDayNum(dates[6])}</div>
-        <Button variant="outline" size="sm" onClick={() => setWeekStart((ws) => new Date(ws.getTime() + 7 * 864e5))}>
-          <ChevronRight className="w-4 h-4" />
-        </Button>
       </div>
 
       <div className="space-y-4">
         {dates.map((d) => {
           const ds = fmtDate(d);
-          const dayShifts = (shifts[ds] || []).filter((s) => !openOnly || !s.employee_id);
+          const dayShifts = (shifts[ds] || []).filter((s) => (!openOnly || !s.employee_id) && (!employeeId || s.employee_id === employeeId));
           return (
             <div key={ds}>
               <div className="flex items-center gap-2 mb-1">

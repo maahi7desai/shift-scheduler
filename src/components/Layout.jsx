@@ -6,7 +6,6 @@ const ownerTabs = [
   { to: '/stores', label: 'Stores', icon: Store },
   { to: '/employees', label: 'Team', icon: Users },
   { to: '/schedule', label: 'Shifts', icon: CalendarDays },
-  { to: '/swaps', label: 'Swaps', icon: Repeat2 },
   { to: '/calendar', label: 'Schedule', icon: Calendar },
 ];
 

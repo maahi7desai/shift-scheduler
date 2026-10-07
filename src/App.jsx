@@ -48,8 +48,8 @@ const AuthenticatedApp = () => {
     }
   }
 
-  // Redirect users who haven't completed role selection
-  if (user && user.role_selected !== true) {
+  // Show role selection only for users without a role (direct registrants)
+  if (user && !user.role) {
     return (
       <Routes>
         <Route path="/role-selection" element={<RoleSelection />} />

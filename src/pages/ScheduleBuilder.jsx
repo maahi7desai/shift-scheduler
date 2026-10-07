@@ -48,12 +48,13 @@ export default function ScheduleBuilder() {
       base44.entities.Employee.filter({ store_ids: storeId }, { sort: 'name', limit: 100 }),
       base44.entities.Shift.filter(
         { store_id: storeId, date: { $gte: fmtDate(dates[0]), $lte: fmtDate(dates[6]) } },
-        { sort: 'date', limit: 200 }
+        { sort: 'start_time', limit: 200 }
       )]
       );
       setEmployees(empRes.items);
       const map = {};
       shiftRes.items.forEach((s) => {(map[s.date] ||= []).push(s);});
+      Object.values(map).forEach((list) => list.sort((a, b) => (a.start_time || '').localeCompare(b.start_time || '')));
       setShifts(map);
     })();
   }, [storeId, weekStart]);

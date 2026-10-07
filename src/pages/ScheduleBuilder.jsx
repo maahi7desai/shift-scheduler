@@ -30,6 +30,7 @@ export default function ScheduleBuilder() {
   const [weekStart, setWeekStart] = useState(getWeekStart());
   const [employees, setEmployees] = useState([]);
   const [shifts, setShifts] = useState({});
+  const [openOnly, setOpenOnly] = useState(false);
 
   const dates = weekDates(weekStart);
 
@@ -126,7 +127,7 @@ export default function ScheduleBuilder() {
   return (
     <div>
       <PageHeader
-        title="Schedule"
+        title="Shifts"
         subtitle="Build the weekly schedule"
         action={isAdmin ?
         <div className="flex items-center gap-2">
@@ -166,6 +167,13 @@ export default function ScheduleBuilder() {
           <option key={s.id} value={s.id}>{s.name}</option>
           )}
         </select>
+        <Button
+          size="sm"
+          variant={openOnly ? 'default' : 'outline'}
+          onClick={() => setOpenOnly((v) => !v)}
+          className="whitespace-nowrap">
+          Open
+        </Button>
         <Button variant="outline" size="sm" onClick={() => setWeekStart((ws) => new Date(ws.getTime() - 7 * 864e5))}>
           <ChevronLeft className="w-4 h-4" />
         </Button>
@@ -178,7 +186,7 @@ export default function ScheduleBuilder() {
       <div className="space-y-4">
         {dates.map((d) => {
           const ds = fmtDate(d);
-          const dayShifts = shifts[ds] || [];
+          const dayShifts = (shifts[ds] || []).filter((s) => !openOnly || !s.employee_id);
           return (
             <div key={ds}>
               <div className="flex items-center gap-2 mb-1">

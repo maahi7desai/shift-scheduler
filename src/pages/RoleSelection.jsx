@@ -13,7 +13,7 @@ export default function RoleSelection() {
     setError("");
     setLoading(true);
     try {
-      await base44.auth.updateMe({ role, role_selected: true });
+      await base44.functions.invoke('setUserRole', { role });
       window.location.href = safeReturnTo();
     } catch (err) {
       setError(err.message || "Failed to save role");

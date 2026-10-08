@@ -70,7 +70,7 @@ export default function MySchedule() {
   const releaseShift = async (id) => {
     setBusy(id);
     try {
-      await base44.entities.Shift.update(id, { employee_id: null, employee_name: null, employee_email: null });
+      await base44.functions.invoke('releaseShift', { shift_id: id });
       toast({ title: 'Shift released', description: 'It is now open for others to pick up.' });
       load();
     } catch (e) {

@@ -67,6 +67,19 @@ export default function MySchedule() {
     }
   };
 
+  const releaseShift = async (id) => {
+    setBusy(id);
+    try {
+      await base44.entities.Shift.update(id, { employee_id: null, employee_name: null, employee_email: null });
+      toast({ title: 'Shift released', description: 'It is now open for others to pick up.' });
+      load();
+    } catch (e) {
+      toast({ title: 'Error', description: e.message, variant: 'destructive' });
+    } finally {
+      setBusy('');
+    }
+  };
+
   const byDate = {};
   (shifts || []).forEach((s) => { (byDate[s.date] ||= []).push(s); });
 
@@ -113,8 +126,8 @@ export default function MySchedule() {
                         <Hand className="w-4 h-4 mr-1" />Pick up
                       </Button>
                     ) : (
-                      <Button variant="outline" size="sm" onClick={() => setSwapShift(s)}>
-                        <Repeat2 className="w-4 h-4 mr-1" />Swap
+                      <Button variant="outline" size="sm" onClick={() => releaseShift(s.id)} disabled={busy === s.id}>
+                        <Repeat2 className="w-4 h-4 mr-1" />Release
                       </Button>
                     )}
                   </div>

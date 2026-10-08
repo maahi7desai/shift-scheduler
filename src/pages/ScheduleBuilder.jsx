@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useSearchParams } from 'react-router-dom';
 import { base44 } from '@/api/base44Client';
 import { useAuth } from '@/lib/AuthContext';
 import { Button } from '@/components/ui/button';
@@ -25,9 +25,12 @@ import { getWeekStart, weekDates, fmtDate, fmtDayNum, fmtDayLabel } from '@/lib/
 export default function ScheduleBuilder() {
   const { user } = useAuth();
   const { toast } = useToast();
+  const [searchParams] = useSearchParams();
   const [stores, setStores] = useState(null);
   const [storeId, setStoreId] = useState('');
-  const [weekStart, setWeekStart] = useState(getWeekStart());
+  const [weekStart, setWeekStart] = useState(
+    searchParams.get('week') ? new Date(searchParams.get('week')) : getWeekStart()
+  );
   const [employees, setEmployees] = useState([]);
   const [shifts, setShifts] = useState({});
   const [employeeId, setEmployeeId] = useState('');

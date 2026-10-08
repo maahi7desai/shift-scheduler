@@ -76,7 +76,7 @@ export default function CreateShift() {
       }));
       await base44.entities.Shift.bulkCreate(records);
       toast({ title: `Shift created for ${records.length} day${records.length > 1 ? 's' : ''}` });
-      navigate('/schedule');
+      navigate(`/schedule?week=${weekStart.toISOString()}`);
     } catch (e) {
       toast({ title: 'Error', description: e.message, variant: 'destructive' });
     } finally {

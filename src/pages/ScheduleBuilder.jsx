@@ -3,11 +3,19 @@ import { Link, useSearchParams } from 'react-router-dom';
 import { base44 } from '@/api/base44Client';
 import { useAuth } from '@/lib/AuthContext';
 import { Button } from '@/components/ui/button';
-import { Plus, ChevronLeft, ChevronRight, CalendarDays, Trash2 } from 'lucide-react';
+import { Plus, ChevronLeft, ChevronRight, CalendarDays, Trash2, LayoutTemplate } from 'lucide-react';
 import PageHeader from '@/components/PageHeader';
 import EmptyState from '@/components/EmptyState';
 import ShiftRow from '@/components/ShiftRow';
 import EmployeeHoursSummary from '@/components/EmployeeHoursSummary';
+import SaveTemplateDialog from '@/components/SaveTemplateDialog';
+import ApplyTemplateDialog from '@/components/ApplyTemplateDialog';
+import {
+  DropdownMenu,
+  DropdownMenuTrigger,
+  DropdownMenuContent,
+  DropdownMenuItem } from
+'@/components/ui/dropdown-menu';
 import { useToast } from '@/components/ui/use-toast';
 import {
   AlertDialog,
@@ -34,8 +42,11 @@ export default function ScheduleBuilder() {
   const [employees, setEmployees] = useState([]);
   const [shifts, setShifts] = useState({});
   const [employeeId, setEmployeeId] = useState('');
+  const [saveTemplateOpen, setSaveTemplateOpen] = useState(false);
+  const [applyTemplateOpen, setApplyTemplateOpen] = useState(false);
 
   const dates = weekDates(weekStart);
+  const store = stores?.find((s) => s.id === storeId);
 
   useEffect(() => {
     (async () => {
@@ -135,6 +146,21 @@ export default function ScheduleBuilder() {
         subtitle="Build the weekly schedule"
         action={isAdmin ?
         <div className="flex items-center gap-2">
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button size="sm" variant="outline">
+                  <LayoutTemplate className="w-4 h-4 mr-1" />Template
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end">
+                <DropdownMenuItem onClick={() => setSaveTemplateOpen(true)}>
+                  Save this week as template
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={() => setApplyTemplateOpen(true)}>
+                  Create week from template
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
             <AlertDialog>
               <AlertDialogTrigger asChild>
                 <Button size="sm" variant="outline">
@@ -229,6 +255,18 @@ export default function ScheduleBuilder() {
       </div>
 
       <EmployeeHoursSummary shifts={shifts} employees={employees} />
+
+      <SaveTemplateDialog
+        open={saveTemplateOpen}
+        onOpenChange={setSaveTemplateOpen}
+        store={store}
+        weekStart={weekStart}
+        shifts={shifts} />
+      <ApplyTemplateDialog
+        open={applyTemplateOpen}
+        onOpenChange={setApplyTemplateOpen}
+        store={store}
+        onApplied={(ws) => setWeekStart(ws)} />
     </div>);
 
 }

@@ -2,7 +2,8 @@ import { useEffect, useState } from 'react';
 import { base44 } from '@/api/base44Client';
 import { useAuth } from '@/lib/AuthContext';
 import { Button } from '@/components/ui/button';
-import { ChevronLeft, ChevronRight, CalendarDays, Repeat2, Hand } from 'lucide-react';
+import { Link } from 'react-router-dom';
+import { ChevronLeft, ChevronRight, CalendarDays, Repeat2, Hand, Bell } from 'lucide-react';
 import PageHeader from '@/components/PageHeader';
 import EmptyState from '@/components/EmptyState';
 import SwapDialog from '@/components/SwapDialog';
@@ -17,8 +18,16 @@ export default function MySchedule() {
   const [employees, setEmployees] = useState([]);
   const [swapShift, setSwapShift] = useState(null);
   const [busy, setBusy] = useState('');
+  const [unread, setUnread] = useState(0);
 
   const dates = weekDates(weekStart);
+
+  useEffect(() => {
+    if (!user) return;
+    base44.entities.Notification.count({ user_email: user.email, read: false })
+      .then(setUnread)
+      .catch(() => {});
+  }, [user]);
 
   const load = async () => {
     if (!user) return;
@@ -85,7 +94,22 @@ export default function MySchedule() {
 
   return (
     <div>
-      <PageHeader title="My Shifts" subtitle="Your shifts and open shifts to pick up" />
+      <PageHeader
+        title="My Shifts"
+        subtitle="Your shifts and open shifts to pick up"
+        action={
+          <Button asChild size="sm" variant="outline" className="relative">
+            <Link to="/notifications" aria-label="Notifications">
+              <Bell className="w-4 h-4" />
+              {unread > 0 && (
+                <span className="absolute -top-1.5 -right-1.5 min-w-[16px] h-4 px-1 rounded-full bg-primary text-primary-foreground text-[10px] leading-4 text-center">
+                  {unread}
+                </span>
+              )}
+            </Link>
+          </Button>
+        }
+      />
 
       <div className="flex items-center justify-between mb-4">
         <Button variant="outline" size="sm" onClick={() => setWeekStart((ws) => new Date(ws.getTime() - 7 * 864e5))}>

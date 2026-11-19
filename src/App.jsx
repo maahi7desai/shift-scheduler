@@ -16,6 +16,7 @@ import MySchedule from '@/pages/MySchedule';
 import Swaps from '@/pages/Swaps';
 import Calendar from '@/pages/Calendar';
 import Profile from '@/pages/Profile';
+import Notifications from '@/pages/Notifications';
 import CreateShift from '@/pages/CreateShift';
 import RoleSelection from '@/pages/RoleSelection';
 import Login from '@/pages/Login';
@@ -77,6 +78,7 @@ const AuthenticatedApp = () => {
           <Route path="/swaps" element={<Swaps />} />
           <Route path="/calendar" element={<Calendar />} />
           <Route path="/profile" element={<Profile />} />
+          <Route path="/notifications" element={<Notifications />} />
         </Route>
         <Route path="/schedule/new" element={<CreateShift />} />
       </Route>

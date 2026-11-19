@@ -3,13 +3,14 @@ import { Link, useSearchParams } from 'react-router-dom';
 import { base44 } from '@/api/base44Client';
 import { useAuth } from '@/lib/AuthContext';
 import { Button } from '@/components/ui/button';
-import { Plus, ChevronLeft, ChevronRight, CalendarDays, Trash2, LayoutTemplate } from 'lucide-react';
+import { Plus, ChevronLeft, ChevronRight, CalendarDays, Trash2, LayoutTemplate, Send } from 'lucide-react';
 import PageHeader from '@/components/PageHeader';
 import EmptyState from '@/components/EmptyState';
 import ShiftRow from '@/components/ShiftRow';
 import EmployeeHoursSummary from '@/components/EmployeeHoursSummary';
 import SaveTemplateDialog from '@/components/SaveTemplateDialog';
 import ApplyTemplateDialog from '@/components/ApplyTemplateDialog';
+import PublishScheduleDialog from '@/components/PublishScheduleDialog';
 import {
   DropdownMenu,
   DropdownMenuTrigger,
@@ -44,6 +45,7 @@ export default function ScheduleBuilder() {
   const [employeeId, setEmployeeId] = useState('');
   const [saveTemplateOpen, setSaveTemplateOpen] = useState(false);
   const [applyTemplateOpen, setApplyTemplateOpen] = useState(false);
+  const [publishOpen, setPublishOpen] = useState(false);
 
   const dates = weekDates(weekStart);
   const store = stores?.find((s) => s.id === storeId);
@@ -224,6 +226,12 @@ export default function ScheduleBuilder() {
         </div>
       </div>
 
+      {isAdmin &&
+      <Button className="w-full mb-4" onClick={() => setPublishOpen(true)}>
+          <Send className="w-4 h-4 mr-1" />Publish schedule to team
+        </Button>
+      }
+
       <div className="space-y-4">
         {dates.map((d) => {
           const ds = fmtDate(d);
@@ -267,6 +275,12 @@ export default function ScheduleBuilder() {
         onOpenChange={setApplyTemplateOpen}
         store={store}
         onApplied={(ws) => setWeekStart(ws)} />
+      <PublishScheduleDialog
+        open={publishOpen}
+        onOpenChange={setPublishOpen}
+        store={store}
+        weekStart={weekStart}
+        shifts={shifts} />
     </div>);
 
 }

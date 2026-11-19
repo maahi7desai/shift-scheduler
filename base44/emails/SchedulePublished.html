@@ -1,0 +1,56 @@
+<mjml>
+  <mj-head>
+    <mj-title>Your schedule for {{week_label}} is ready</mj-title>
+    <mj-preview>{{store_name}} published the schedule for {{week_label}}</mj-preview>
+    <mj-attributes>
+      <mj-all font-family="Arial, Helvetica, sans-serif" />
+      <mj-section background-color="#ffffff" padding="0 36px" />
+      <mj-text color="#202e3c" font-size="15px" line-height="1.6" padding="0" />
+      <mj-button background-color="#2a9d90" color="#000000" border-radius="6px" font-weight="700" inner-padding="14px 28px" align="left" />
+    </mj-attributes>
+  </mj-head>
+  <mj-body background-color="#fcfdfd">
+    <mj-section background-color="#2a9d90" padding="20px 36px">
+      <mj-column>
+        <mj-image src="https://media.base44.com/images/public/6ac42b639e2a5c8f9aa67652/39a5a0948_logo.png" width="32px" align="left" padding="0" />
+        <mj-text color="#000000" font-size="16px" font-weight="700" padding="8px 0 0 0">Shift Scheduler</mj-text>
+      </mj-column>
+    </mj-section>
+
+    <mj-section padding="40px 36px 8px">
+      <mj-column>
+        <mj-text font-size="32px" line-height="1.15" font-weight="700" padding="0 0 10px 0">
+          Your schedule is out, {{first_name}}
+        </mj-text>
+        <mj-text color="#627684" font-size="16px" padding="0">
+          {{store_name}} published the schedule for {{week_label}}.
+        </mj-text>
+      </mj-column>
+    </mj-section>
+
+    <mj-section padding="24px 36px">
+      <mj-column width="50%" background-color="#f2f8f7" border-radius="6px" padding="16px">
+        <mj-text font-size="28px" font-weight="700" color="#2a9d90" padding="0">{{shift_count}}</mj-text>
+        <mj-text color="#627684" font-size="13px" padding="4px 0 0 0">shifts this week</mj-text>
+      </mj-column>
+      <mj-column width="50%" padding="16px">
+        <mj-text font-size="14px" color="#202e3c" font-weight="700" padding="0">{{week_label}}</mj-text>
+        <mj-text color="#627684" font-size="13px" padding="4px 0 0 0">{{store_name}}</mj-text>
+      </mj-column>
+    </mj-section>
+
+    <mj-section padding="8px 36px 32px">
+      <mj-column>
+        <mj-button href="https://shift-scheduler.base44.app/my-schedule">View my schedule</mj-button>
+      </mj-column>
+    </mj-section>
+
+    <mj-section background-color="#f2f8f7" padding="24px 36px">
+      <mj-column>
+        <mj-text color="#627684" font-size="12px" line-height="1.6" padding="0">
+          You are receiving this because you are on the team at {{store_name}}. If you can no longer work one of these shifts, release it from the app so a teammate can pick it up.
+        </mj-text>
+      </mj-column>
+    </mj-section>
+  </mj-body>
+</mjml>
